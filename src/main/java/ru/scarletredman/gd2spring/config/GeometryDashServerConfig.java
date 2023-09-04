@@ -16,4 +16,9 @@ public class GeometryDashServerConfig {
     String gdServerURI() {
         return serverInfo().getGdServerURI();
     }
+
+    @Bean
+    boolean debugMode() {
+        return true;
+    }
 }
