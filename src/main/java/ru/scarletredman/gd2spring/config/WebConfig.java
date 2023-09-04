@@ -1,6 +1,6 @@
 package ru.scarletredman.gd2spring.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -9,19 +9,16 @@ import ru.scarletredman.gd2spring.interceptor.DebugInterceptor;
 
 @Configuration
 @DependsOn("debugMode")
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
     private final boolean debugMode;
-
-    @Autowired
-    public WebConfig(boolean debugMode) {
-        this.debugMode = debugMode;
-    }
+    private final String gdServerURI;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         if (debugMode) {
-            registry.addInterceptor(new DebugInterceptor());
+            registry.addInterceptor(new DebugInterceptor(gdServerURI));
         }
     }
 }
