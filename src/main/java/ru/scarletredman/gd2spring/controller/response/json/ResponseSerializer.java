@@ -7,14 +7,19 @@ import ru.scarletredman.gd2spring.controller.response.LoginResponse;
 
 import java.io.IOException;
 
-public class LoginSerializer extends RawSerializer<LoginResponse> {
+public class ResponseSerializer extends RawSerializer<ResponseSerializer.Response> {
 
-    public LoginSerializer() {
-        super(LoginResponse.class);
+    public ResponseSerializer() {
+        super(Response.class);
     }
 
     @Override
-    public void serialize(LoginResponse value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+    public void serialize(Response value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeRawValue(value.getResponse());
+    }
+
+    public interface Response {
+
+        String getResponse();
     }
 }

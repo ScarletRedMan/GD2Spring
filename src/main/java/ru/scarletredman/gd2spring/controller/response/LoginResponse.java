@@ -1,10 +1,10 @@
 package ru.scarletredman.gd2spring.controller.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import ru.scarletredman.gd2spring.controller.response.json.LoginSerializer;
+import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 
-@JsonSerialize(using = LoginSerializer.class)
-public final class LoginResponse {
+@JsonSerialize(using = ResponseSerializer.class)
+public final class LoginResponse implements ResponseSerializer.Response {
 
     private final ErrorReason errorReason;
     private final int id;
