@@ -9,5 +9,4 @@ public class Gd2SpringApplication {
     public static void main(String[] args) {
         SpringApplication.run(Gd2SpringApplication.class, args);
     }
-
 }
