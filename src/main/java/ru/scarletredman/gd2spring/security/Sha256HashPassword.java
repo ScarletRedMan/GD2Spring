@@ -8,9 +8,12 @@ import java.security.MessageDigest;
 public class Sha256HashPassword implements HashPassword {
 
     @Override
-    public String hash(String input) {
+    public String hash(String input, String salt) {
+        var password = input + salt;
+
         try {
-            return Hex.encodeHexString(MessageDigest.getInstance("SHA-256").digest(input.getBytes(StandardCharsets.UTF_8)));
+            return Hex.encodeHexString(MessageDigest.getInstance("SHA-256")
+                    .digest(password.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
