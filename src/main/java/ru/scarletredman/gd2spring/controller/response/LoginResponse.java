@@ -7,8 +7,8 @@ import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 public final class LoginResponse implements ResponseSerializer.Response {
 
     private final ErrorReason errorReason;
-    private final int id;
-    private final int userId;
+    private final long id;
+    private final long userId;
 
     public LoginResponse(ErrorReason errorReason) {
         this.errorReason = errorReason;
@@ -16,7 +16,7 @@ public final class LoginResponse implements ResponseSerializer.Response {
         userId = -1;
     }
 
-    public LoginResponse(int id, int userId) {
+    public LoginResponse(long id, long userId) {
         errorReason = null;
         this.id = id;
         this.userId = userId;
