@@ -36,7 +36,7 @@ public class UserService {
             throw new UserRegisterError(RegisterResponse.EMAIL_IS_ALREADY_IN_USE);
         }
 
-        var hashedPassword = hashPassword.hash(password, username);
+        var hashedPassword = hashPassword.hash(password, username.toLowerCase());
         var user = new User(username, hashedPassword, email);
         userRepository.save(user);
     }

@@ -5,10 +5,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import java.util.Arrays;
 
-@Log4j2(topic = "GeometryDash API")
+@Log4j2(topic = "GeometryDash API (Input)")
 @RequiredArgsConstructor
 public class DebugInterceptor implements HandlerInterceptor {
 
@@ -25,5 +27,11 @@ public class DebugInterceptor implements HandlerInterceptor {
             log.info("   " + key + ": " + Arrays.toString(map.get(key)));
         }
         return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        if (!request.getRequestURI().startsWith(gdServerURI)) return;
+        log.info(response);
     }
 }
