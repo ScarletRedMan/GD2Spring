@@ -17,7 +17,8 @@ public interface ResponseLogger {
         @Override
         public <T> T result(T obj) {
             try {
-                log.info(ow.writeValueAsString(obj));
+                if (obj instanceof String) log.info(obj);
+                else log.info(ow.writeValueAsString(obj));
             } catch (Throwable throwable) {
                 throw new RuntimeException(throwable);
             }

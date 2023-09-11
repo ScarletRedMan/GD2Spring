@@ -30,12 +30,14 @@ public class AccountController {
                               @RequestParam(name = "email") String email,
                               @RequestParam(name = "secret") String secret) {
 
+        RegisterResponse response;
         try {
             userService.registerUser(username, password, email);
-            return RegisterResponse.SUCCESS;
+            response = RegisterResponse.SUCCESS;
         } catch (UserRegisterError error) {
-            return error.getReason();
+            response = error.getReason();
         }
+        return responseLogger.result(response);
     }
 
     @PostMapping("/accounts/loginGJAccount.php")
@@ -45,42 +47,49 @@ public class AccountController {
           @RequestParam(name = "sID") String sid,
           @RequestParam(name = "secret") String secret) {
 
+        LoginResponse response;
         try {
             var user = userService.loginUser(username, hashPassword.hash(password, username.toLowerCase()));
-            return new LoginResponse(user.getId(), user.getId());
+            response = new LoginResponse(user.getId(), user.getId());
         } catch (UserLoginError error) {
-            return new LoginResponse(error.getReason());
+            response = new LoginResponse(error.getReason());
+            responseLogger.result("HASHED PASSWORD: " + hashPassword.hash(password, username.toLowerCase()));
         }
+        return responseLogger.result(response);
     }
 
-    @PostMapping("/accounts/backupGJAccountNew.php")
+    @PostMapping("/database/accounts/backupGJAccountNew.php")
     int backup(@RequestParam(name = "userName") String username,
                   @RequestParam(name = "password") String password,
                   @RequestParam(name = "saveData") String data,
                   @RequestParam(name = "secret") String secret) {
 
+        int response;
         try {
             backupService.save(username, password, data);
-            return 1;
+            response = 1;
         } catch (UserBackupError error) {
-            return -1;
+            response = -1;
         } catch (UserLoginError error) {
-            return -2;
+            response = -2;
         }
+        return responseLogger.result(response);
     }
 
-    @PostMapping("/accounts/syncGJAccountNew.php")
+    @PostMapping("/database/accounts/syncGJAccountNew.php")
     String sync(@RequestParam(name = "userName") String username,
                 @RequestParam(name = "password") String password,
                 @RequestParam(name = "secret") String secret) {
 
+        String response;
         try {
-            return backupService.load(username, password);
+            response = backupService.load(username, password) + ";21;30;a;a";;
         } catch (UserBackupError error) {
-            return "-1";
+            response = "-1";
         } catch (UserLoginError error) {
-            return "-2";
+            response = "-2";
         }
+        return responseLogger.result(response);
     }
 
     @PostMapping("/getAccountURL.php")
@@ -88,6 +97,6 @@ public class AccountController {
                               @RequestParam(name = "type") int requestType,
                               @RequestParam(name = "secret") String secret) {
 
-        return backupDataServerURL;
+        return responseLogger.result(backupDataServerURL);
     }
 }

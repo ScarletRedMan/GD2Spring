@@ -28,10 +28,4 @@ public class DebugInterceptor implements HandlerInterceptor {
         }
         return true;
     }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if (!request.getRequestURI().startsWith(gdServerURI)) return;
-        log.info(response);
-    }
 }
