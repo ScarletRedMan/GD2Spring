@@ -1,6 +1,7 @@
 package ru.scarletredman.gd2spring;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import ru.scarletredman.gd2spring.util.GdPasswordUtil;
@@ -31,5 +32,11 @@ public class GdPasswordTests {
             })
     void testGjp(String sourceValue) {
         Assertions.assertEquals(sourceValue, GdPasswordUtil.gjpDecode(GdPasswordUtil.gjpEncode(sourceValue)));
+    }
+
+    @Test
+    void testDecodeRealGjp() {
+        var gjp = "QkBQQEJK";
+        Assertions.assertEquals("qwerty", GdPasswordUtil.gjpDecode(gjp));
     }
 }
