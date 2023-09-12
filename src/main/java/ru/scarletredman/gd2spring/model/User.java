@@ -3,12 +3,17 @@ package ru.scarletredman.gd2spring.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.userdetails.UserDetails;
+import ru.scarletredman.gd2spring.security.role.DefaultRoles;
+import ru.scarletredman.gd2spring.security.role.Role;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +38,30 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    @Override
+    public Set<Role> getAuthorities() {
+        return Set.of(DefaultRoles.USER);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !isBanned();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

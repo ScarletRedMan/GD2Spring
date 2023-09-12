@@ -1,6 +1,9 @@
 package ru.scarletredman.gd2spring.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.scarletredman.gd2spring.controller.response.LoginResponse;
@@ -13,7 +16,7 @@ import ru.scarletredman.gd2spring.service.exception.UserRegisterError;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final HashPassword hashPassword;
@@ -57,5 +60,11 @@ public class UserService {
         }
 
         return user;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var user = userRepository.findUserByUsernameIgnoreCase(username);
+        return user.orElseThrow(() -> new UsernameNotFoundException("User not fount exception"));
     }
 }
