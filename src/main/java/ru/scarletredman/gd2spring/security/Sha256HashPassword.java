@@ -9,7 +9,7 @@ public class Sha256HashPassword implements HashPassword {
 
     @Override
     public String hash(String input, String salt) {
-        var password = input + salt;
+        var password = input + "|" + salt;
 
         try {
             return Hex.encodeHexString(MessageDigest.getInstance("SHA-256")

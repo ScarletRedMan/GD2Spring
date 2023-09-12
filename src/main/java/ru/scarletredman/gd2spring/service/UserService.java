@@ -1,7 +1,8 @@
 package ru.scarletredman.gd2spring.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.lang.NonNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import ru.scarletredman.gd2spring.repository.UserRepository;
 import ru.scarletredman.gd2spring.security.HashPassword;
 import ru.scarletredman.gd2spring.service.exception.UserLoginError;
 import ru.scarletredman.gd2spring.service.exception.UserRegisterError;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,13 +49,24 @@ public class UserService implements UserDetailsService {
 
     @Transactional(rollbackFor = UserLoginError.class, readOnly = true)
     public User loginUser(String username, String hashedPassword) throws UserLoginError {
-        var obj = userRepository.findUserByUsernameIgnoreCase(username);
-        if (obj.isEmpty()) {
+        return processLogin(userRepository.findUserByUsernameIgnoreCase(username), hashedPassword, false);
+    }
+
+    @Transactional
+    public User loginUser(long userId, String rawPassword) throws UserLoginError {
+        return processLogin(userRepository.findById(userId), rawPassword, true);
+    }
+
+    private User processLogin(Optional<User> userOpt, String password, boolean rawPassword) throws UserLoginError {
+        if (userOpt.isEmpty()) {
             throw new UserLoginError(LoginResponse.ErrorReason.LOGIN_FAILED);
         }
 
-        var user = obj.get();
-        if (!hashedPassword.equals(user.getPassword())) {
+        var user = userOpt.get();
+        if (rawPassword) {
+            password = hashPassword.hash(password, user.getUsername().toLowerCase());
+        }
+        if (!password.equals(user.getPassword())) {
             throw new UserLoginError(LoginResponse.ErrorReason.LOGIN_FAILED);
         }
         if (user.isBanned()) {
@@ -63,8 +77,20 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userRepository.findUserByUsernameIgnoreCase(username);
         return user.orElseThrow(() -> new UsernameNotFoundException("User not fount exception"));
+    }
+
+    public static @NonNull User getCurrentUserFromSecurityContextHolder() throws UserLoginError {
+        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User user) {
+            if (user.isBanned()) {
+                throw new UserLoginError(LoginResponse.ErrorReason.BANNED);
+            }
+
+            return user;
+        }
+
+        throw new UserLoginError(LoginResponse.ErrorReason.LOGIN_FAILED);
     }
 }

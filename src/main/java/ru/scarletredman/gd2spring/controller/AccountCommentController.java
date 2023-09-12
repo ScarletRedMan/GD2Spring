@@ -5,14 +5,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
-import ru.scarletredman.gd2spring.security.annotation.AuthorizedOnly;
+import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
 
 @RestController
 @GeometryDashAPI
 @RequiredArgsConstructor
 public class AccountCommentController {
 
-    @AuthorizedOnly
+    @GDAuthorizedOnly
     @PostMapping("/getGJAccountComments20.php")
     String accountComments(@RequestParam(name = "accountID") int accountId,
                            @RequestParam(name = "page") int page,
@@ -21,13 +21,13 @@ public class AccountCommentController {
         return "-1";
     }
 
-    @AuthorizedOnly
+    @GDAuthorizedOnly
     @PostMapping("/uploadGJAccComment20.php")
     String publishAccountComment(@RequestParam(name = "comment") String encodedText) {
         return "-1";
     }
 
-    @AuthorizedOnly
+    @GDAuthorizedOnly
     @PostMapping("/deleteGJAccComment20.php")
     String deleteAccountComment(@RequestParam(name = "commentID") int commentId,
                                 @RequestParam(name = "cType") int wtfParam) {

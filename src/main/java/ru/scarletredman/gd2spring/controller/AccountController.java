@@ -83,7 +83,7 @@ public class AccountController {
 
         String response;
         try {
-            response = backupService.load(username, password) + ";21;30;a;a";;
+            response = backupService.load(username, password) + ";21;30;a;a";
         } catch (UserBackupError error) {
             response = "-1";
         } catch (UserLoginError error) {
