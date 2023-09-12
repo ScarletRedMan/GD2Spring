@@ -25,10 +25,11 @@ public class AccountController {
     private final ResponseLogger responseLogger;
 
     @PostMapping("/accounts/registerGJAccount.php")
-    RegisterResponse register(@RequestParam(name = "userName") String username,
-                              @RequestParam(name = "password") String password,
-                              @RequestParam(name = "email") String email,
-                              @RequestParam(name = "secret") String secret) {
+    RegisterResponse register(
+            @RequestParam(name = "userName") String username,
+            @RequestParam(name = "password") String password,
+            @RequestParam(name = "email") String email,
+            @RequestParam(name = "secret") String secret) {
 
         RegisterResponse response;
         try {
@@ -41,11 +42,12 @@ public class AccountController {
     }
 
     @PostMapping("/accounts/loginGJAccount.php")
-    LoginResponse login(@RequestParam(name = "userName") String username,
-          @RequestParam(name = "password") String password,
-          @RequestParam(name = "udid") String udId,
-          @RequestParam(name = "sID") String sid,
-          @RequestParam(name = "secret") String secret) {
+    LoginResponse login(
+            @RequestParam(name = "userName") String username,
+            @RequestParam(name = "password") String password,
+            @RequestParam(name = "udid") String udId,
+            @RequestParam(name = "sID") String sid,
+            @RequestParam(name = "secret") String secret) {
 
         LoginResponse response;
         try {
@@ -59,10 +61,11 @@ public class AccountController {
     }
 
     @PostMapping("/database/accounts/backupGJAccountNew.php")
-    int backup(@RequestParam(name = "userName") String username,
-                  @RequestParam(name = "password") String password,
-                  @RequestParam(name = "saveData") String data,
-                  @RequestParam(name = "secret") String secret) {
+    int backup(
+            @RequestParam(name = "userName") String username,
+            @RequestParam(name = "password") String password,
+            @RequestParam(name = "saveData") String data,
+            @RequestParam(name = "secret") String secret) {
 
         int response;
         try {
@@ -77,9 +80,10 @@ public class AccountController {
     }
 
     @PostMapping("/database/accounts/syncGJAccountNew.php")
-    String sync(@RequestParam(name = "userName") String username,
-                @RequestParam(name = "password") String password,
-                @RequestParam(name = "secret") String secret) {
+    String sync(
+            @RequestParam(name = "userName") String username,
+            @RequestParam(name = "password") String password,
+            @RequestParam(name = "secret") String secret) {
 
         String response;
         try {
@@ -93,9 +97,10 @@ public class AccountController {
     }
 
     @PostMapping("/getAccountURL.php")
-    String accountDataStorage(@RequestParam(name = "accountID") int userId,
-                              @RequestParam(name = "type") int requestType,
-                              @RequestParam(name = "secret") String secret) {
+    String accountDataStorage(
+            @RequestParam(name = "accountID") int userId,
+            @RequestParam(name = "type") int requestType,
+            @RequestParam(name = "secret") String secret) {
 
         return responseLogger.result(backupDataServerURL);
     }

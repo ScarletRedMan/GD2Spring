@@ -3,8 +3,6 @@ package ru.scarletredman.gd2spring.controller.response.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.RawSerializer;
-import ru.scarletredman.gd2spring.controller.response.LoginResponse;
-
 import java.io.IOException;
 
 public class ResponseSerializer extends RawSerializer<ResponseSerializer.Response> {

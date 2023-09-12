@@ -25,7 +25,7 @@ public class UserBackupService {
             throw new UserLoginError(LoginResponse.ErrorReason.LOGIN_FAILED);
         }
         var user = userOpt.get();
-        if (!hashPassword.hash(password, username.toLowerCase()).equals(user.getPassword())){
+        if (!hashPassword.hash(password, username.toLowerCase()).equals(user.getPassword())) {
             throw new UserLoginError(LoginResponse.ErrorReason.LOGIN_FAILED);
         }
         if (user.isBanned()) {
@@ -34,13 +34,13 @@ public class UserBackupService {
         return user;
     }
 
-    @Transactional(rollbackFor = { UserLoginError.class, UserBackupError.class })
+    @Transactional(rollbackFor = {UserLoginError.class, UserBackupError.class})
     public void save(String username, String password, String data) throws UserLoginError {
         var user = auth(username, password);
         backupRepository.saveBackup(user, data);
     }
 
-    @Transactional(rollbackFor = { UserLoginError.class, UserBackupError.class })
+    @Transactional(rollbackFor = {UserLoginError.class, UserBackupError.class})
     public String load(String username, String password) throws UserLoginError {
         var user = auth(username, password);
         return backupRepository.loadBackup(user).orElseThrow(UserBackupError::new);

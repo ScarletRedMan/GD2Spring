@@ -6,8 +6,8 @@ import org.springframework.lang.NonNull;
 @Getter
 public final class ServerInfo {
 
-    private final static int GD_SERVER_URL_LEN = "http://www.boomlings.com/database".length();
-    private final static char URL_FILLER_CHAR = '-';
+    private static final int GD_SERVER_URL_LEN = "http://www.boomlings.com/database".length();
+    private static final char URL_FILLER_CHAR = '-';
 
     private final String serverName;
     private final String root;
@@ -31,7 +31,7 @@ public final class ServerInfo {
         var sb = new StringBuilder();
         for (int i = 0; i < delta; i++) {
             if (i == 0) {
-                sb.append(root.endsWith("/")? URL_FILLER_CHAR : '/');
+                sb.append(root.endsWith("/") ? URL_FILLER_CHAR : '/');
                 continue;
             }
 

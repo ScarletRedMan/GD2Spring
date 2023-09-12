@@ -8,13 +8,27 @@ import ru.scarletredman.gd2spring.util.GdPasswordUtil;
 public class GdPasswordTests {
 
     @ParameterizedTest
-    @ValueSource(strings = { "", "hello", "sssssssssssssssssssssssssss", "39ur92jfdi2gh3-fsi834hsd", GdPasswordUtil.DEFAULT_KEY})
+    @ValueSource(
+            strings = {
+                "",
+                "hello",
+                "sssssssssssssssssssssssssss",
+                "39ur92jfdi2gh3-fsi834hsd",
+                GdPasswordUtil.DEFAULT_KEY
+            })
     void testXor(String input) {
         Assertions.assertEquals(input, GdPasswordUtil.xor(GdPasswordUtil.xor(input)));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "", "hello", "sssssssssssssssssssssssssss", "39ur92jfdi2gh3-fsi834hsd", GdPasswordUtil.DEFAULT_KEY})
+    @ValueSource(
+            strings = {
+                "",
+                "hello",
+                "sssssssssssssssssssssssssss",
+                "39ur92jfdi2gh3-fsi834hsd",
+                GdPasswordUtil.DEFAULT_KEY
+            })
     void testGjp(String sourceValue) {
         Assertions.assertEquals(sourceValue, GdPasswordUtil.gjpDecode(GdPasswordUtil.gjpEncode(sourceValue)));
     }

@@ -1,13 +1,12 @@
 package ru.scarletredman.gd2spring.model;
 
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.scarletredman.gd2spring.security.role.DefaultRoles;
 import ru.scarletredman.gd2spring.security.role.Role;
-
-import java.util.Set;
 
 @Entity
 @Table(name = "users")

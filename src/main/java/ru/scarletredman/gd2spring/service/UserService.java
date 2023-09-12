@@ -1,5 +1,6 @@
 package ru.scarletredman.gd2spring.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,8 +15,6 @@ import ru.scarletredman.gd2spring.repository.UserRepository;
 import ru.scarletredman.gd2spring.security.HashPassword;
 import ru.scarletredman.gd2spring.service.exception.UserLoginError;
 import ru.scarletredman.gd2spring.service.exception.UserRegisterError;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

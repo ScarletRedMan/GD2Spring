@@ -4,9 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.scarletredman.gd2spring.controller.response.ServerInfo;
 import ru.scarletredman.gd2spring.repository.UserBackupRepository;
+import ru.scarletredman.gd2spring.repository.impl.MemoryUserBackupRepository;
 import ru.scarletredman.gd2spring.security.HashPassword;
 import ru.scarletredman.gd2spring.security.Sha256HashPassword;
-import ru.scarletredman.gd2spring.repository.impl.MemoryUserBackupRepository;
 
 @Configuration
 public class GeometryDashServerConfig {

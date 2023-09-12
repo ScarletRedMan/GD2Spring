@@ -46,7 +46,8 @@ public class SecurityConfig {
 
         http.sessionManagement(m -> m.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.httpBasic(b -> b.authenticationEntryPoint(authenticationEntryPoint()));
-        http.addFilterAfter(new GeometryDashAuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class);
+        http.addFilterAfter(
+                new GeometryDashAuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class);
 
         return http.build();
     }

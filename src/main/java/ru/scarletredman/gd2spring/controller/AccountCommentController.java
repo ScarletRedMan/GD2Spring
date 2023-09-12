@@ -14,10 +14,11 @@ public class AccountCommentController {
 
     @GDAuthorizedOnly
     @PostMapping("/getGJAccountComments20.php")
-    String accountComments(@RequestParam(name = "accountID") int accountId,
-                           @RequestParam(name = "page") int page,
-                           @RequestParam(name = "total") int total,
-                           @RequestParam(name = "secret") String secret) {
+    String accountComments(
+            @RequestParam(name = "accountID") int accountId,
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "total") int total,
+            @RequestParam(name = "secret") String secret) {
         return "-1";
     }
 
@@ -29,8 +30,8 @@ public class AccountCommentController {
 
     @GDAuthorizedOnly
     @PostMapping("/deleteGJAccComment20.php")
-    String deleteAccountComment(@RequestParam(name = "commentID") int commentId,
-                                @RequestParam(name = "cType") int wtfParam) {
+    String deleteAccountComment(
+            @RequestParam(name = "commentID") int commentId, @RequestParam(name = "cType") int wtfParam) {
         return "-1";
     }
 }

@@ -1,10 +1,9 @@
 package ru.scarletredman.gd2spring.security.authentication;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-
 import java.util.Collection;
 import java.util.HashSet;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 public record GDAuthentication(long userId, String rawPassword) implements Authentication {
 
