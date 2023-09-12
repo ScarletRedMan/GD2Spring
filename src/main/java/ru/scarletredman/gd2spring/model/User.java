@@ -1,10 +1,12 @@
 package ru.scarletredman.gd2spring.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.scarletredman.gd2spring.model.embedable.Skin;
 import ru.scarletredman.gd2spring.security.role.DefaultRoles;
 import ru.scarletredman.gd2spring.security.role.Role;
 
@@ -30,6 +32,29 @@ public class User implements UserDetails {
 
     @Column(name = "banned", nullable = false)
     private boolean banned = false;
+
+    @Column(name = "stars", nullable = false)
+    @Min(0)
+    private int stars = 0;
+
+    @Column(name = "demons", nullable = false)
+    @Min(0)
+    private int demons = 0;
+
+    @Column(name = "diamonds", nullable = false)
+    @Min(0)
+    private int diamonds = 0;
+
+    @Column(name = "coins", nullable = false)
+    @Min(0)
+    private int coins = 0;
+
+    @Column(name = "user_coins", nullable = false)
+    @Min(0)
+    private int userCoins = 0;
+
+    @Embedded
+    private Skin skin = new Skin();
 
     public User() {}
 

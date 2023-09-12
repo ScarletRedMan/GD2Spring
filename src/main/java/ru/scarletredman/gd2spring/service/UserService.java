@@ -81,6 +81,11 @@ public class UserService implements UserDetailsService {
         return user.orElseThrow(() -> new UsernameNotFoundException("User not fount exception"));
     }
 
+    @Transactional
+    public void updateScore(User user) {
+        userRepository.save(user);
+    }
+
     public static @NonNull User getCurrentUserFromSecurityContextHolder() throws UserLoginError {
         if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User user) {
             if (user.isBanned()) {

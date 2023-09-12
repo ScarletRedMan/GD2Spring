@@ -2,6 +2,7 @@ package ru.scarletredman.gd2spring.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -19,15 +20,21 @@ public class GDSecurityExceptionResolver extends AbstractHandlerExceptionResolve
             Object handler,
             @NonNull Exception ex) {
 
-        var error = ex.getCause();
-        if (error instanceof UserLoginError) {
-            try {
-                response.getWriter().write("-1");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return new ModelAndView();
+        if (ex.getCause() instanceof UserLoginError) {
+            return errorCode(response);
+        }
+        if (ex.getCause() != null && ex.getCause().getCause() instanceof ConstraintViolationException) {
+            return errorCode(response);
         }
         return null;
+    }
+
+    private ModelAndView errorCode(HttpServletResponse response) {
+        try {
+            response.getWriter().write("-1");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new ModelAndView();
     }
 }
