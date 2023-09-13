@@ -13,6 +13,7 @@ import ru.scarletredman.gd2spring.model.UserComment;
 import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
 import ru.scarletredman.gd2spring.service.UserCommentService;
 import ru.scarletredman.gd2spring.service.UserService;
+import ru.scarletredman.gd2spring.service.exception.UserCommentError;
 import ru.scarletredman.gd2spring.util.ResponseLogger;
 
 @RestController
@@ -60,7 +61,14 @@ public class AccountCommentController {
     @GDAuthorizedOnly
     @PostMapping("/deleteGJAccComment20.php")
     String deleteAccountComment(
-            @RequestParam(name = "commentID") int commentId, @RequestParam(name = "cType") int wtfParam) {
-        return "-1";
+            @RequestParam(name = "commentID") long commentId, @RequestParam(name = "cType") int wtfParam) {
+
+        var user = UserService.getCurrentUserFromSecurityContextHolder();
+        try {
+            userCommentService.deleteComment(user, commentId);
+            return "1";
+        } catch (UserCommentError error) {
+            return "-1";
+        }
     }
 }

@@ -19,6 +19,8 @@ public class TestConfig {
         if (!debugMode) return;
 
         var user = userService.registerUser("test", "qwerty", "m@m.m");
-        userCommentService.writeComment(new UserComment(user, "Hello world!"));
+        for (int i = 0; i < 30; i++) {
+            userCommentService.writeComment(new UserComment(user, i + ") Hello world!"));
+        }
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.UserComment;
 import ru.scarletredman.gd2spring.repository.UserCommentRepository;
+import ru.scarletredman.gd2spring.service.exception.UserCommentError;
 import ru.scarletredman.gd2spring.service.type.UserCommentPage;
 
 @Service
@@ -20,7 +21,21 @@ public class UserCommentService {
         userCommentRepository.save(comment);
     }
 
-    public void deleteComment(UserComment comment) {}
+    @Transactional(rollbackFor = {UserCommentError.class})
+    public void deleteComment(User user, long commentId) throws UserCommentError {
+        UserComment comment;
+        {
+            var temp = userCommentRepository.findById(commentId);
+            if (temp.isEmpty()) return;
+            comment = temp.get();
+        }
+
+        if (!comment.getOwner().equals(user)) {
+            throw new UserCommentError();
+        }
+
+        userCommentRepository.delete(comment);
+    }
 
     @Transactional
     public UserCommentPage getComments(User user, int page, int size) {
