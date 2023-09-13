@@ -86,6 +86,11 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public Optional<User> findUserById(long userId) {
+        return userRepository.findById(userId);
+    }
+
     public static @NonNull User getCurrentUserFromSecurityContextHolder() throws UserLoginError {
         if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User user) {
             if (user.isBanned()) {

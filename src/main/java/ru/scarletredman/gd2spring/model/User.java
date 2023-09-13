@@ -2,11 +2,13 @@ package ru.scarletredman.gd2spring.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.scarletredman.gd2spring.model.embedable.Skin;
+import ru.scarletredman.gd2spring.model.embedable.UserSettings;
 import ru.scarletredman.gd2spring.security.role.DefaultRoles;
 import ru.scarletredman.gd2spring.security.role.Role;
 
@@ -53,8 +55,27 @@ public class User implements UserDetails {
     @Min(0)
     private int userCoins = 0;
 
+    @Column(name = "creator_points", nullable = false)
+    @Min(0)
+    private int creatorPoints = 0;
+
+    @Column(name = "rating_banned", nullable = false)
+    private boolean ratingBanned = false;
+
+    @Column(name = "twitter_url", nullable = false)
+    private String twitterUrl = "";
+
+    @Column(name = "twitch_url", nullable = false)
+    private String twitchUrl = "";
+
+    @Column(name = "youtube_url", nullable = false)
+    private String youtubeUrl = "";
+
     @Embedded
     private Skin skin = new Skin();
+
+    @Embedded
+    private UserSettings userSettings = new UserSettings();
 
     public User() {}
 
@@ -87,5 +108,15 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj instanceof User target) {
+            return Objects.equals(getId(), target.getId());
+        }
+        return false;
     }
 }

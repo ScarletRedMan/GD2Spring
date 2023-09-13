@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
+import ru.scarletredman.gd2spring.controller.response.UserInfoResponse;
+import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
 import ru.scarletredman.gd2spring.service.UserService;
 import ru.scarletredman.gd2spring.util.ResponseLogger;
@@ -67,5 +69,22 @@ public class UserScoreController {
 
         userService.updateScore(user);
         return responseLogger.result(1);
+    }
+
+    @GDAuthorizedOnly
+    @PostMapping("/getGJUserInfo20.php")
+    UserInfoResponse getUserInfo(
+            @RequestParam(name = "targetAccountID") int targetAccountId, @RequestParam(name = "secret") String secret) {
+
+        var user = UserService.getCurrentUserFromSecurityContextHolder();
+        User targetUser;
+
+        {
+            var temp = userService.findUserById(targetAccountId);
+            if (temp.isEmpty()) return UserInfoResponse.errorResponse();
+            targetUser = temp.get();
+        }
+
+        return new UserInfoResponse(targetUser, user.equals(targetUser), 1);
     }
 }
