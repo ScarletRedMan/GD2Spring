@@ -24,7 +24,7 @@ public class UserService implements UserDetailsService {
     private final HashPassword hashPassword;
 
     @Transactional(rollbackFor = UserRegisterError.class)
-    public void registerUser(String username, String password, String email) throws UserRegisterError {
+    public User registerUser(String username, String password, String email) throws UserRegisterError {
         if (username.length() < 3) {
             throw new UserRegisterError(RegisterResponse.TOO_SHORT_USERNAME);
         }
@@ -44,6 +44,8 @@ public class UserService implements UserDetailsService {
         var hashedPassword = hashPassword.hash(password, username.toLowerCase());
         var user = new User(username, hashedPassword, email);
         userRepository.save(user);
+
+        return user;
     }
 
     @Transactional(rollbackFor = UserLoginError.class, readOnly = true)
