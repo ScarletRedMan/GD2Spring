@@ -38,3 +38,6 @@ out/
 
 ### draw.io ###
 *.drawio.*
+
+### Vim ###
+.vim
