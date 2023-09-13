@@ -73,9 +73,13 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         stats.put(Stat.FRIEND_STATE, 0); // todo: is friend
 
         var settings = user.getUserSettings();
-        stats.put(Stat.ALLOW_FRIEND_REQ_SETTING, settings.getAllowFriendRequestsFrom().getValue());
+        stats.put(
+                Stat.ALLOW_FRIEND_REQ_SETTING,
+                settings.getAllowFriendRequestsFrom().getValue());
         stats.put(Stat.ALLOW_MESSAGES_SETTING, settings.getAllowMessagesFrom().getValue());
-        stats.put(Stat.VISIBLE_COMMENTS_HISTORY_SETTING, settings.getShowCommentHistoryTo().getValue());
+        stats.put(
+                Stat.VISIBLE_COMMENTS_HISTORY_SETTING,
+                settings.getShowCommentHistoryTo().getValue());
 
         stats.put(Stat.BADGE, Badge.NONE); // todo: moderator status
 
