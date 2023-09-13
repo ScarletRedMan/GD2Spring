@@ -56,11 +56,4 @@ public class SecurityConfig {
     UserDetailsService userDetailsService() {
         return userService;
     }
-
-    @Autowired
-    void createTestUser(UserService userService, boolean debugMode) {
-        if (!debugMode) return;
-
-        userService.registerUser("test", "qwerty", "m@m.m");
-    }
 }
