@@ -45,7 +45,8 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         stats.put(Stat.CREATOR_POINTS, user.getCreatorPoints());
         stats.put(Stat.PLAYER_ID, user.getId());
         stats.put(Stat.ACCOUNT_ID, user.getId());
-        stats.put(Stat.SHOW_RANK, !user.isRatingBanned());
+        stats.put(Stat.SHOW_RANK, user.isRatingBanned() ? 0 : 1);
+        stats.put(Stat.RANK, ratingPosition);
 
         stats.put(Stat.STARS, user.getStars());
         stats.put(Stat.DEMONS, user.getDemons());
@@ -72,9 +73,9 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         stats.put(Stat.FRIEND_STATE, 0); // todo: is friend
 
         var settings = user.getUserSettings();
-        stats.put(Stat.ALLOW_FRIEND_REQ_SETTING, settings.getAllowFriendRequestsFrom());
-        stats.put(Stat.ALLOW_MESSAGES_SETTING, settings.getAllowMessagesFrom());
-        stats.put(Stat.VISIBLE_COMMENTS_HISTORY_SETTING, settings.getShowCommentHistoryTo());
+        stats.put(Stat.ALLOW_FRIEND_REQ_SETTING, settings.getAllowFriendRequestsFrom().getValue());
+        stats.put(Stat.ALLOW_MESSAGES_SETTING, settings.getAllowMessagesFrom().getValue());
+        stats.put(Stat.VISIBLE_COMMENTS_HISTORY_SETTING, settings.getShowCommentHistoryTo().getValue());
 
         stats.put(Stat.BADGE, Badge.NONE); // todo: moderator status
 

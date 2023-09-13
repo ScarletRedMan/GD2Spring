@@ -85,6 +85,8 @@ public class UserScoreController {
             targetUser = temp.get();
         }
 
-        return new UserInfoResponse(targetUser, user.equals(targetUser), 1);
+        var ratingPosition = 1; // todo: implement getting rank
+
+        return responseLogger.result(new UserInfoResponse(targetUser, user.equals(targetUser), ratingPosition));
     }
 }
