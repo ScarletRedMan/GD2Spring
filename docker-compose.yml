@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./run/postgres:/var/lib/postgresql/data"
+
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: test
+      RABBITMQ_DEFAULT_PASSWORD: test
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - "./run/rabbitmq:/var/lib/rabbitmq"
