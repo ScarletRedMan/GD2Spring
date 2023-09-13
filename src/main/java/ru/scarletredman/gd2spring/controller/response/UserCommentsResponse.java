@@ -50,9 +50,9 @@ public class UserCommentsResponse implements ResponseSerializer.Response {
         for (UserComment comment : comments) {
             buffer[i++] = encodeComment(comment);
         }
-        long totalCommentCount = page.total();
+        long remainingComments = page.total() - page.page() * 10L;
 
-        return String.join(COMMENT_SEPARATOR, buffer) + "#" + totalCommentCount + ":" + page + ":10";
+        return String.join(COMMENT_SEPARATOR, buffer) + "#" + remainingComments + ":" + page.page() + ":10";
     }
 
     public static String encodeText(String input) {
