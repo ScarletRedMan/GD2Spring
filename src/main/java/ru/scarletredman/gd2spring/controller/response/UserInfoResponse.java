@@ -125,7 +125,7 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         ACCOUNT_ID("16"),
         USER_COINS("17"),
         ALLOW_MESSAGES_SETTING("18"),
-        ALLOW_FRIEND_REQ_SETTING("19"), // todo: fix invalid parameter id
+        ALLOW_FRIEND_REQ_SETTING("19"),
         YOUTUBE_URL("20"),
         ACC_ICON("21"),
         ACC_SHIP("22"),
@@ -133,7 +133,7 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         ACC_BIRD("24"),
         ACC_DART("25"),
         ACC_ROBOT("26"),
-        ACC_GLOW("18"),
+        ACC_GLOW("28"),
         RANK("30"),
         FRIEND_STATE("31"),
         MESSAGES_COUNT("38"), // player == target
