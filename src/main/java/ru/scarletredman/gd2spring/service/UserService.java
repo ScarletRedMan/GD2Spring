@@ -1,5 +1,6 @@
 package ru.scarletredman.gd2spring.service;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.scarletredman.gd2spring.controller.response.LoginResponse;
 import ru.scarletredman.gd2spring.controller.response.RegisterResponse;
 import ru.scarletredman.gd2spring.model.User;
+import ru.scarletredman.gd2spring.model.dto.UserScoreDTO;
 import ru.scarletredman.gd2spring.repository.UserRepository;
 import ru.scarletredman.gd2spring.security.HashPassword;
 import ru.scarletredman.gd2spring.service.exception.UserLoginError;
@@ -96,6 +98,16 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void updateSettings(User user) {
         userRepository.updateSettingsForUser(user);
+    }
+
+    @Transactional
+    public List<UserScoreDTO> getTop100UsersByStars() {
+        return userRepository.getTop100ByStars();
+    }
+
+    @Transactional
+    public List<UserScoreDTO> getTop100UsersByCreatorPoints() {
+        return userRepository.getTop100ByCreatorPoints();
     }
 
     public static @NonNull User getCurrentUserFromSecurityContextHolder() throws UserLoginError {

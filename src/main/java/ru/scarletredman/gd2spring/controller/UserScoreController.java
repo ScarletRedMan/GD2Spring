@@ -1,12 +1,15 @@
 package ru.scarletredman.gd2spring.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
+import ru.scarletredman.gd2spring.controller.response.ScoresResponse;
 import ru.scarletredman.gd2spring.controller.response.UserInfoResponse;
 import ru.scarletredman.gd2spring.model.User;
+import ru.scarletredman.gd2spring.model.dto.UserScoreDTO;
 import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
 import ru.scarletredman.gd2spring.service.UserService;
 import ru.scarletredman.gd2spring.util.ResponseLogger;
@@ -86,5 +89,22 @@ public class UserScoreController {
         var ratingPosition = 1; // todo: implement getting rank
 
         return responseLogger.result(new UserInfoResponse(targetUser, user.equals(targetUser), ratingPosition));
+    }
+
+    @GDAuthorizedOnly
+    @PostMapping("/getGJScores20.php")
+    ScoresResponse getScore(
+            @RequestParam(name = "type") String type,
+            @RequestParam(name = "count") int count,
+            @RequestParam(name = "secret") String secret) {
+
+        var user = UserService.getCurrentUserFromSecurityContextHolder();
+        List<UserScoreDTO> players = switch (type) { // todo: relative, friends
+                    case "top" -> userService.getTop100UsersByStars();
+                    case "creators" -> userService.getTop100UsersByCreatorPoints();
+                    default -> List.of(new UserScoreDTO(user));
+                };
+
+        return responseLogger.result(new ScoresResponse(players));
     }
 }

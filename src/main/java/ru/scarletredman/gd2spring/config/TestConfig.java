@@ -22,5 +22,13 @@ public class TestConfig {
         for (int i = 0; i < 30; i++) {
             userCommentService.writeComment(new UserComment(user, i + ") Hello world!"));
         }
+
+        for (int i = 0; i < 10; i++) {
+            var u = userService.registerUser("test" + i, "qwerty", "m" + i + "@m.m");
+            u.getSkin().setFirstColor(i * 2 + 1);
+            u.setStars(i * 2);
+            u.setCreatorPoints(i);
+            userService.updateScore(u);
+        }
     }
 }
