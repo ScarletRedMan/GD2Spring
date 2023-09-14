@@ -73,7 +73,7 @@ public class UserCommentsResponse implements ResponseSerializer.Response {
         }
 
         private void init(UserComment comment) {
-            elements.put(Element.PLAYER_ID, comment.getOwner());
+            elements.put(Element.PLAYER_ID, comment.getOwner().getId());
             elements.put(Element.TEXT, encodeText(comment.getText()));
             elements.put(Element.LIKES, comment.getLikes());
             elements.put(Element.UNKNOWN_ELEMENT, 0);
