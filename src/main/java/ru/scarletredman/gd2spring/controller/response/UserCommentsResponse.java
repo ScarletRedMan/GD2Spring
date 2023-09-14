@@ -11,6 +11,7 @@ import org.apache.commons.codec.binary.Base64;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 import ru.scarletredman.gd2spring.model.UserComment;
 import ru.scarletredman.gd2spring.service.type.UserCommentPage;
+import ru.scarletredman.gd2spring.util.TimeFormatUtil;
 
 @Getter
 @Setter
@@ -77,7 +78,7 @@ public class UserCommentsResponse implements ResponseSerializer.Response {
             elements.put(Element.TEXT, encodeText(comment.getText()));
             elements.put(Element.LIKES, comment.getLikes());
             elements.put(Element.UNKNOWN_ELEMENT, 0);
-            elements.put(Element.DATE, comment.getTimestamp()); // todo: format date
+            elements.put(Element.DATE, TimeFormatUtil.formatBetween(comment.getTimestamp()));
             elements.put(Element.IS_SPAM, comment.isSpam() ? 1 : 0);
             elements.put(Element.COMMENT_ID, comment.getId());
         }
