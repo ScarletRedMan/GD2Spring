@@ -100,6 +100,17 @@ public class UserService implements UserDetailsService {
         userRepository.updateSettingsForUser(user);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<User> findUserWithRating(int userId) {
+        var user = findUserById(userId);
+        if (user.isEmpty()) return user;
+
+        var u = user.get();
+        u.setRating(userRepository.getRating(u));
+
+        return user;
+    }
+
     @Transactional
     public List<UserScoreDTO> getTop100UsersByStars() {
         return userRepository.getTop100ByStars();

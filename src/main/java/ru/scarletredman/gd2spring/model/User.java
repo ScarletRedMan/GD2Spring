@@ -77,6 +77,8 @@ public class User implements UserDetails {
     @Embedded
     private UserSettings userSettings = new UserSettings();
 
+    private transient int rating = 0;
+
     public User() {}
 
     public User(String username, String password, String email) {

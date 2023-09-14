@@ -44,8 +44,21 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 + "order by stars desc "
                 + "limit 100";
 
-        // todo: calculate rank for each user
-        return entityManager.createQuery(hql, UserScoreDTO.class).getResultList();
+        var list = entityManager.createQuery(hql, UserScoreDTO.class).getResultList();
+        int minStarts = -1;
+        int rank = 1;
+        for (var dto : list) {
+            if (minStarts == -1) minStarts = dto.getStars();
+
+            if (minStarts > dto.getStars()) {
+                minStarts = dto.getStars();
+                rank++;
+            }
+
+            dto.setRank(rank);
+        }
+
+        return list;
     }
 
     @Override
@@ -65,5 +78,16 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
         }
 
         return result;
+    }
+
+    @Override
+    public int getRating(User user) {
+        var hql = "select count(distinct stars) from User where stars > :stars";
+
+        var result = entityManager
+                .createQuery(hql, Long.class)
+                .setParameter("stars", user.getStars())
+                .getSingleResult();
+        return result.intValue() + 1;
     }
 }

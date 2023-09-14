@@ -19,7 +19,6 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
     private final boolean error;
     private final User user;
     private final boolean self;
-    private int ratingPosition;
     private final Map<Stat, Object> stats = new EnumMap<>(Stat.class);
 
     private UserInfoResponse() {
@@ -28,11 +27,10 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         this.self = false;
     }
 
-    public UserInfoResponse(@NonNull User user, boolean self, int ratingPosition) {
+    public UserInfoResponse(@NonNull User user, boolean self) {
         this.error = false;
         this.user = user;
         this.self = self;
-        this.ratingPosition = ratingPosition;
         init(user);
     }
 
@@ -46,7 +44,7 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         stats.put(Stat.PLAYER_ID, user.getId());
         stats.put(Stat.ACCOUNT_ID, user.getId());
         stats.put(Stat.SHOW_RANK, user.isRatingBanned() ? 0 : 1);
-        stats.put(Stat.RANK, ratingPosition);
+        stats.put(Stat.RANK, user.getRating());
 
         stats.put(Stat.STARS, user.getStars());
         stats.put(Stat.DEMONS, user.getDemons());

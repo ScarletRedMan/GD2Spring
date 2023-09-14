@@ -81,14 +81,12 @@ public class UserScoreController {
         User targetUser;
 
         {
-            var temp = userService.findUserById(targetAccountId);
+            var temp = userService.findUserWithRating(targetAccountId);
             if (temp.isEmpty()) return UserInfoResponse.errorResponse();
             targetUser = temp.get();
         }
 
-        var ratingPosition = 1; // todo: implement getting rank
-
-        return responseLogger.result(new UserInfoResponse(targetUser, user.equals(targetUser), ratingPosition));
+        return responseLogger.result(new UserInfoResponse(targetUser, user.equals(targetUser)));
     }
 
     @GDAuthorizedOnly
