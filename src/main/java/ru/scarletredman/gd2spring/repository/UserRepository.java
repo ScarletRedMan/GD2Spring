@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.scarletredman.gd2spring.model.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, CustomUserRepository {
 
     Optional<User> findUserByUsernameIgnoreCase(String username);
 

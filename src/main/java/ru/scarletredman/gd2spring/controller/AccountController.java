@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
 import ru.scarletredman.gd2spring.controller.response.LoginResponse;
 import ru.scarletredman.gd2spring.controller.response.RegisterResponse;
+import ru.scarletredman.gd2spring.model.embedable.UserSettings;
 import ru.scarletredman.gd2spring.security.HashPassword;
+import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
 import ru.scarletredman.gd2spring.service.UserService;
 import ru.scarletredman.gd2spring.service.exception.UserLoginError;
 import ru.scarletredman.gd2spring.service.exception.UserRegisterError;
@@ -64,5 +66,34 @@ public class AccountController {
             @RequestParam(name = "secret") String secret) {
 
         return responseLogger.result(backupDataServerURL);
+    }
+
+    @GDAuthorizedOnly
+    @PostMapping("/updateGJAccSettings20.php")
+    String updateSettings(
+            @RequestParam(name = "mS") int messages,
+            @RequestParam(name = "frS") int friend,
+            @RequestParam(name = "cS") int comments,
+            @RequestParam(name = "yt") String youtube,
+            @RequestParam(name = "twitter") String twitter,
+            @RequestParam(name = "twitch") String twitch,
+            @RequestParam(name = "secret") String secret) {
+
+        var user = UserService.getCurrentUserFromSecurityContextHolder();
+        user.setYoutubeUrl(youtube);
+        user.setTwitchUrl(twitch);
+        user.setTwitterUrl(twitter);
+
+        var settings = user.getUserSettings();
+        try {
+            settings.setAllowFriendRequestsFrom(UserSettings.AllowFriendRequestsFrom.fromValue(friend));
+            settings.setAllowMessagesFrom(UserSettings.AllowMessagesFrom.fromValue(messages));
+            settings.setShowCommentHistoryTo(UserSettings.ShowCommentHistoryTo.fromValue(comments));
+        } catch (IllegalArgumentException ex) {
+            return "-1";
+        }
+
+        userService.updateSettings(user);
+        return "1";
     }
 }

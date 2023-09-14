@@ -125,7 +125,7 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         ACCOUNT_ID("16"),
         USER_COINS("17"),
         ALLOW_MESSAGES_SETTING("18"),
-        ALLOW_FRIEND_REQ_SETTING("19"),
+        ALLOW_FRIEND_REQ_SETTING("19"), // todo: fix invalid parameter id
         YOUTUBE_URL("20"),
         ACC_ICON("21"),
         ACC_SHIP("22"),
