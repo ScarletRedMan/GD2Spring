@@ -74,7 +74,6 @@ public class UserScoreController {
     @GDAuthorizedOnly
     @PostMapping("/getGJUserInfo20.php")
     UserInfoResponse getUserInfo(@RequestParam(name = "targetAccountID") int targetAccountId) {
-
         var user = UserService.getCurrentUserFromSecurityContextHolder();
         User targetUser;
 
