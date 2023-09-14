@@ -26,6 +26,9 @@ public class TestConfig {
         for (int i = 0; i < 10; i++) {
             var u = userService.registerUser("test" + i, "qwerty", "m" + i + "@m.m");
             u.getSkin().setFirstColor(i * 2 + 1);
+            u.getSkin().setSecondColor(i * 2 + 7);
+            u.getSkin().setIcon(i + 1);
+            u.getSkin().setAccIcon(i + 1);
             u.setStars(i * 2);
             u.setCreatorPoints(i);
             userService.updateScore(u);
