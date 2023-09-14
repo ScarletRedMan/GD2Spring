@@ -67,7 +67,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
         var hql = "select new ru.scarletredman.gd2spring.model.dto.UserScoreDTO("
                 + "id, username, stars, demons, creatorPoints, coins, userCoins, diamonds, "
                 + "skin.icon, skin.firstColor, skin.secondColor, skin.currentIconType, skin.specialSkin"
-                + ") from User where banned = false and ratingBanned = false "
+                + ") from User where banned = false and ratingBanned = false and creatorPoints > 0 "
                 + "order by creatorPoints desc "
                 + "limit 100";
 
