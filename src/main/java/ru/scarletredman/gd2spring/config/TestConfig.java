@@ -29,6 +29,8 @@ public class TestConfig {
             u.setStars(i * 2);
             u.setCreatorPoints(i);
             userService.updateScore(u);
+
+            userCommentService.writeComment(new UserComment(u, "Hello world!!!"));
         }
     }
 }
