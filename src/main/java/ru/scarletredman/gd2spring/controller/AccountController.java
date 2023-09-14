@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
 import ru.scarletredman.gd2spring.controller.response.LoginResponse;
 import ru.scarletredman.gd2spring.controller.response.RegisterResponse;
+import ru.scarletredman.gd2spring.controller.response.UpdateUserSettingsResponse;
 import ru.scarletredman.gd2spring.model.embedable.UserSettings;
 import ru.scarletredman.gd2spring.security.HashPassword;
 import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
@@ -70,7 +71,7 @@ public class AccountController {
 
     @GDAuthorizedOnly
     @PostMapping("/updateGJAccSettings20.php")
-    String updateSettings(
+    UpdateUserSettingsResponse updateSettings(
             @RequestParam(name = "mS") int messages,
             @RequestParam(name = "frS") int friend,
             @RequestParam(name = "cS") int comments,
@@ -90,10 +91,10 @@ public class AccountController {
             settings.setAllowMessagesFrom(UserSettings.AllowMessagesFrom.fromValue(messages));
             settings.setShowCommentHistoryTo(UserSettings.ShowCommentHistoryTo.fromValue(comments));
         } catch (IllegalArgumentException ex) {
-            return "-1";
+            return responseLogger.result(UpdateUserSettingsResponse.FAIL);
         }
 
         userService.updateSettings(user);
-        return "1";
+        return responseLogger.result(UpdateUserSettingsResponse.SUCCESS);
     }
 }
