@@ -3,6 +3,7 @@ package ru.scarletredman.gd2spring.repository.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.dto.UserScoreDTO;
@@ -87,7 +88,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 + "id, username, stars, demons, creatorPoints, coins, userCoins, diamonds, "
                 + "skin.icon, skin.firstColor, skin.secondColor, skin.currentIconType, skin.specialSkin "
                 + ") from User where stars > :stars and banned = false and ratingBanned = false "
-                + "order by stars desc "
+                + "order by stars asc "
                 + "limit 25";
 
         var hqlUser = "select new ru.scarletredman.gd2spring.model.dto.UserScoreDTO( "
@@ -115,6 +116,8 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 .setParameter("stars", user.getStars())
                 .setParameter("id", user.getId())
                 .getResultList();
+
+        Collections.reverse(before);
 
         var list = new ArrayList<UserScoreDTO>();
         list.addAll(before);
