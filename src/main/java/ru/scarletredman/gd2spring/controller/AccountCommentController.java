@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
+import ru.scarletredman.gd2spring.controller.response.DeleteAccountCommentResponse;
+import ru.scarletredman.gd2spring.controller.response.PublishAccountCommentResponse;
 import ru.scarletredman.gd2spring.controller.response.UserCommentsResponse;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.UserComment;
@@ -45,30 +47,30 @@ public class AccountCommentController {
 
     @GDAuthorizedOnly
     @PostMapping("/uploadGJAccComment20.php")
-    String publishAccountComment(@RequestParam(name = "comment") String encodedText) {
+    PublishAccountCommentResponse publishAccountComment(@RequestParam(name = "comment") String encodedText) {
         var user = UserService.getCurrentUserFromSecurityContextHolder();
         var originalText = new String(Base64.decodeBase64(encodedText), StandardCharsets.UTF_8);
         var comment = new UserComment(user, originalText);
 
         if (originalText.trim().isEmpty()) {
-            return responseLogger.result("-1");
+            return responseLogger.result(PublishAccountCommentResponse.FAIL);
         }
 
         userCommentService.writeComment(comment);
-        return responseLogger.result("1");
+        return responseLogger.result(PublishAccountCommentResponse.SUCCESS);
     }
 
     @GDAuthorizedOnly
     @PostMapping("/deleteGJAccComment20.php")
-    String deleteAccountComment(
+    DeleteAccountCommentResponse deleteAccountComment(
             @RequestParam(name = "commentID") long commentId, @RequestParam(name = "cType") int wtfParam) {
 
         var user = UserService.getCurrentUserFromSecurityContextHolder();
         try {
             userCommentService.deleteComment(user, commentId);
-            return "1";
+            return responseLogger.result(DeleteAccountCommentResponse.SUCCESS);
         } catch (UserCommentError error) {
-            return "-1";
+            return responseLogger.result(DeleteAccountCommentResponse.FAILED);
         }
     }
 }
