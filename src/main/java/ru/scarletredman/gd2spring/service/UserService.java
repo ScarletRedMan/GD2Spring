@@ -111,14 +111,36 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<UserScoreDTO> getTop100UsersByStars() {
         return userRepository.getTop100ByStars();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<UserScoreDTO> getTop100UsersByCreatorPoints() {
         return userRepository.getTop100ByCreatorPoints();
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserScoreDTO> getRelativeTop(User user) {
+        var list = userRepository.getRelativeTop(user);
+
+        int rank = -1;
+        int maxStars = -1;
+        for (var target : list) {
+            if (rank == -1) {
+                rank = userRepository.getRating(target.getStars());
+                maxStars = target.getStars();
+            }
+
+            if (maxStars > target.getStars()) {
+                rank++;
+                maxStars = target.getStars();
+            }
+
+            target.setRank(rank);
+        }
+        return list;
     }
 
     public static @NonNull User getCurrentUserFromSecurityContextHolder() throws UserLoginError {

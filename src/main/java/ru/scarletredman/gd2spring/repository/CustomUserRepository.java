@@ -14,5 +14,9 @@ public interface CustomUserRepository {
 
     List<UserScoreDTO> getTop100ByCreatorPoints();
 
+    List<UserScoreDTO> getRelativeTop(User user);
+
+    int getRating(int stars);
+
     int getRating(User user);
 }

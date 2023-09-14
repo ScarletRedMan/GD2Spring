@@ -97,9 +97,10 @@ public class UserScoreController {
             @RequestParam(name = "secret") String secret) {
 
         var user = UserService.getCurrentUserFromSecurityContextHolder();
-        List<UserScoreDTO> players = switch (type) { // todo: relative, friends
+        List<UserScoreDTO> players = switch (type) { // todo: friends
                     case "top" -> userService.getTop100UsersByStars();
                     case "creators" -> userService.getTop100UsersByCreatorPoints();
+                    case "relative" -> userService.getRelativeTop(user);
                     default -> List.of(new UserScoreDTO(user));
                 };
 
