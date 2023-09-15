@@ -8,6 +8,7 @@ import java.util.List;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.dto.UserScoreDTO;
 import ru.scarletredman.gd2spring.repository.CustomUserRepository;
+import ru.scarletredman.gd2spring.service.type.FindUserPage;
 
 public class CustomUserRepositoryImpl implements CustomUserRepository {
 
@@ -140,5 +141,39 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     @Override
     public int getRating(User user) {
         return getRating(user.getStars());
+    }
+
+    @Override
+    public FindUserPage findUser(String request, int page) {
+        long userId;
+        try {
+            userId = Long.parseLong(request);
+        } catch (NumberFormatException ex) {
+            userId = -1;
+        }
+
+        var hqlUsers = "select new ru.scarletredman.gd2spring.model.dto.UserScoreDTO("
+                + "id, username, stars, demons, creatorPoints, coins, userCoins, diamonds, "
+                + "skin.icon, skin.firstColor, skin.secondColor, skin.currentIconType, skin.specialSkin) "
+                + "from User where id = :id or upper(username) like :username";
+
+        var hqlCount = "select count(*) from User where id = :id or upper(username) like :username";
+
+        var usernameLike = "%" + request.toUpperCase() + "%";
+        var users = entityManager
+                .createQuery(hqlUsers, UserScoreDTO.class)
+                .setFirstResult(page * 10)
+                .setMaxResults(10)
+                .setParameter("id", userId)
+                .setParameter("username", usernameLike)
+                .getResultList();
+
+        var total = entityManager
+                .createQuery(hqlCount, Long.class)
+                .setParameter("id", userId)
+                .setParameter("username", usernameLike)
+                .getSingleResult();
+
+        return new FindUserPage(users, page, total);
     }
 }

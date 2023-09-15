@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
+import ru.scarletredman.gd2spring.controller.response.GetUsersResponse;
 import ru.scarletredman.gd2spring.controller.response.ScoresResponse;
 import ru.scarletredman.gd2spring.controller.response.UserInfoResponse;
 import ru.scarletredman.gd2spring.model.User;
@@ -108,10 +109,17 @@ public class UserScoreController {
     }
 
     @PostMapping("/getGJUsers20.php")
-    String getUsers(
+    GetUsersResponse getUsers(
             @RequestParam(name = "str") String username,
             @RequestParam(name = "total") int total,
             @RequestParam(name = "page") int page) {
-        return "-1";
+
+        username = username.trim();
+        if (username.isEmpty() || username.length() > 20 || page < 0) {
+            return responseLogger.result(GetUsersResponse.errorResponse());
+        }
+
+        var data = userService.findUser(username, page);
+        return responseLogger.result(new GetUsersResponse(data));
     }
 }

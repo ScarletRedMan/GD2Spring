@@ -17,6 +17,7 @@ import ru.scarletredman.gd2spring.repository.UserRepository;
 import ru.scarletredman.gd2spring.security.HashPassword;
 import ru.scarletredman.gd2spring.service.exception.UserLoginError;
 import ru.scarletredman.gd2spring.service.exception.UserRegisterError;
+import ru.scarletredman.gd2spring.service.type.FindUserPage;
 
 @Service
 @RequiredArgsConstructor
@@ -141,6 +142,11 @@ public class UserService implements UserDetailsService {
             target.setRank(rank);
         }
         return list;
+    }
+
+    @Transactional(readOnly = true)
+    public FindUserPage findUser(String input, int page) {
+        return userRepository.findUser(input, page);
     }
 
     public static @NonNull User getCurrentUserFromSecurityContextHolder() throws UserLoginError {
