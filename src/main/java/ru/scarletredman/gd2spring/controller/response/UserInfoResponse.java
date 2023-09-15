@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.lang.NonNull;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 import ru.scarletredman.gd2spring.model.User;
+import ru.scarletredman.gd2spring.util.JoinResponseUtil;
 
 @Getter
 @Setter
@@ -97,21 +98,11 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
             return "-1";
         }
 
-        String[] buffer = new String[stats.size() * 2];
-
-        int i = 0;
-        for (Stat element : stats.keySet()) {
-            buffer[i * 2] = element.getCode();
-            buffer[i * 2 + 1] = stats.get(element).toString();
-
-            i++;
-        }
-
-        return String.join(":", buffer);
+        return JoinResponseUtil.join(stats, ":");
     }
 
     @Getter
-    public enum Stat {
+    public enum Stat implements JoinResponseUtil.Key {
         NAME("1"),
         PLAYER_ID("2"),
         STARS("3"),

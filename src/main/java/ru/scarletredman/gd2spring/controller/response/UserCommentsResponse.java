@@ -11,6 +11,7 @@ import org.apache.commons.codec.binary.Base64;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 import ru.scarletredman.gd2spring.model.UserComment;
 import ru.scarletredman.gd2spring.service.type.UserCommentPage;
+import ru.scarletredman.gd2spring.util.JoinResponseUtil;
 import ru.scarletredman.gd2spring.util.TimeFormatUtil;
 
 @Getter
@@ -85,21 +86,11 @@ public class UserCommentsResponse implements ResponseSerializer.Response {
 
         @Override
         public String toString() {
-            String[] buffer = new String[elements.size() * 2];
-
-            int i = 0;
-            for (Element element : elements.keySet()) {
-                buffer[i * 2] = element.getCode();
-                buffer[i * 2 + 1] = elements.get(element).toString();
-
-                i++;
-            }
-
-            return String.join("~", buffer);
+            return JoinResponseUtil.join(elements, "~");
         }
 
         @Getter
-        public enum Element {
+        public enum Element implements JoinResponseUtil.Key {
             TEXT("2"),
             PLAYER_ID("3"),
             LIKES("4"),

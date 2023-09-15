@@ -106,4 +106,12 @@ public class UserScoreController {
 
         return responseLogger.result(new ScoresResponse(players));
     }
+
+    @PostMapping("/getGJUsers20.php")
+    String getUsers(
+            @RequestParam(name = "str") String username,
+            @RequestParam(name = "total") int total,
+            @RequestParam(name = "page") int page) {
+        return "-1";
+    }
 }

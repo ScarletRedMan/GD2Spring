@@ -7,6 +7,7 @@ import java.util.Map;
 import lombok.Getter;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 import ru.scarletredman.gd2spring.model.dto.UserScoreDTO;
+import ru.scarletredman.gd2spring.util.JoinResponseUtil;
 
 @JsonSerialize(using = ResponseSerializer.class)
 public final class ScoresResponse implements ResponseSerializer.Response {
@@ -61,22 +62,12 @@ public final class ScoresResponse implements ResponseSerializer.Response {
 
         @Override
         public String toString() {
-            String[] buffer = new String[elements.size() * 2];
-
-            int i = 0;
-            for (var element : elements.keySet()) {
-                buffer[i * 2] = element.getCode();
-                buffer[i * 2 + 1] = elements.get(element).toString();
-
-                i++;
-            }
-
-            return String.join(":", buffer);
+            return JoinResponseUtil.join(elements, ":");
         }
     }
 
     @Getter
-    public enum ScoreElement {
+    public enum ScoreElement implements JoinResponseUtil.Key {
         NAME("1"),
         PLAYER_ID("2"),
         STARS("3"),
