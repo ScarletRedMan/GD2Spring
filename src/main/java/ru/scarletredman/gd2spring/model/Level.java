@@ -23,6 +23,9 @@ public class Level {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = false)
+    private String description;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "owner", nullable = false)
     private User owner;

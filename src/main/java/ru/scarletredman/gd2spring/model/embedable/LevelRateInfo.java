@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 @Embeddable
 public class LevelRateInfo {
 
+    @Column(name = "stars", nullable = false)
+    private int stars = 0;
+
     @Column(name = "difficulty", nullable = false)
     private Difficulty difficulty = Difficulty.NONE;
 
@@ -30,21 +33,25 @@ public class LevelRateInfo {
     @Getter
     @RequiredArgsConstructor
     public enum Difficulty {
-        NONE(0),
-        AUTO(10),
-        EASY(20),
-        NORMAL(30),
-        HARD(40),
-        HARDER(50),
-        INSANE(60),
-        DEMON(70),
-        EASY_DEMON(80),
-        MEDIUM_DEMON(90),
-        HARD_DEMON(100),
-        INSANE_DEMON(110),
-        EXTREME_DEMON(120);
+        NONE,
+        AUTO,
+        EASY,
+        NORMAL,
+        HARD,
+        HARDER,
+        INSANE,
+        DEMON(true),
+        EASY_DEMON(true),
+        MEDIUM_DEMON(true),
+        HARD_DEMON(true),
+        INSANE_DEMON(true),
+        EXTREME_DEMON(true);
 
-        private final int code;
+        private final boolean demon;
+
+        Difficulty() {
+            this(false);
+        }
     }
 
     @Getter
