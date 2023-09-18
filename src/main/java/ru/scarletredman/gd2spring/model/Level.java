@@ -23,9 +23,13 @@ public class Level {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "owner", nullable = false)
     private User owner;
+
+    @ManyToOne
+    @JoinColumn(name = "original")
+    private Level original = null;
 
     @Embedded
     private LevelRateInfo rate = new LevelRateInfo();
@@ -35,6 +39,24 @@ public class Level {
 
     @Embedded
     private LevelFilters filters = new LevelFilters();
+
+    @Column(name = "password", nullable = false)
+    private int password = 0;
+
+    @Column(name = "unlisted", nullable = false)
+    private boolean unlisted = false;
+
+    @Column(name = "likes", nullable = false)
+    private int likes = 0;
+
+    @Column(name = "downloads", nullable = false)
+    private int downloads = 0;
+
+    @Column(name = "sound_track", nullable = false)
+    private int soundTrack = 0;
+
+    @Column(name = "song_id", nullable = false)
+    private int songId = 0;
 
     public Level() {}
 
