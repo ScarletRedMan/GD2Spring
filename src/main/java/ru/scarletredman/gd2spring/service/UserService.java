@@ -13,6 +13,9 @@ import ru.scarletredman.gd2spring.controller.response.LoginResponse;
 import ru.scarletredman.gd2spring.controller.response.RegisterResponse;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.dto.UserScoreDTO;
+import ru.scarletredman.gd2spring.rabbit.MQEventPublisher;
+import ru.scarletredman.gd2spring.rabbit.response.user.UserLoginResponse;
+import ru.scarletredman.gd2spring.rabbit.response.user.UserRegisterResponse;
 import ru.scarletredman.gd2spring.repository.UserRepository;
 import ru.scarletredman.gd2spring.security.HashPassword;
 import ru.scarletredman.gd2spring.service.exception.UserLoginError;
@@ -25,6 +28,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final HashPassword hashPassword;
+    private final MQEventPublisher eventPublisher;
 
     @Transactional(rollbackFor = UserRegisterError.class)
     public User registerUser(String username, String password, String email) throws UserRegisterError {
@@ -48,16 +52,20 @@ public class UserService implements UserDetailsService {
         var user = new User(username, hashedPassword, email);
         userRepository.save(user);
 
+        eventPublisher.publish(new UserRegisterResponse(user));
         return user;
     }
 
     @Transactional(rollbackFor = UserLoginError.class, readOnly = true)
     public User loginUser(String username, String hashedPassword) throws UserLoginError {
-        return processLogin(userRepository.findUserByUsernameIgnoreCase(username), hashedPassword, false);
+        var user = processLogin(userRepository.findUserByUsernameIgnoreCase(username), hashedPassword, false);
+
+        eventPublisher.publish(new UserLoginResponse(user));
+        return user;
     }
 
     @Transactional
-    public User loginUser(long userId, String rawPassword) throws UserLoginError {
+    public User loginUserByGjp(long userId, String rawPassword) throws UserLoginError {
         return processLogin(userRepository.findById(userId), rawPassword, true);
     }
 

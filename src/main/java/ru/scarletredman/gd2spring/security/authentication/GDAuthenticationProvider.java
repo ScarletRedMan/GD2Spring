@@ -18,7 +18,7 @@ public class GDAuthenticationProvider implements AuthenticationProvider {
         var auth = (GDAuthentication) authentication;
 
         try {
-            var user = userService.loginUser(auth.userId(), auth.rawPassword());
+            var user = userService.loginUserByGjp(auth.userId(), auth.rawPassword());
 
             return UsernamePasswordAuthenticationToken.authenticated(user, auth.rawPassword(), user.getAuthorities());
         } catch (UserLoginError error) {
