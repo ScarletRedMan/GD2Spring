@@ -14,8 +14,8 @@ import ru.scarletredman.gd2spring.controller.response.RegisterResponse;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.dto.UserScoreDTO;
 import ru.scarletredman.gd2spring.rabbit.MQEventPublisher;
-import ru.scarletredman.gd2spring.rabbit.response.user.UserLoginResponse;
-import ru.scarletredman.gd2spring.rabbit.response.user.UserRegisterResponse;
+import ru.scarletredman.gd2spring.rabbit.response.user.UserLoginMQResponse;
+import ru.scarletredman.gd2spring.rabbit.response.user.UserRegisterMQResponse;
 import ru.scarletredman.gd2spring.repository.UserRepository;
 import ru.scarletredman.gd2spring.security.HashPassword;
 import ru.scarletredman.gd2spring.service.exception.UserLoginError;
@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
         var user = new User(username, hashedPassword, email);
         userRepository.save(user);
 
-        eventPublisher.publish(new UserRegisterResponse(user));
+        eventPublisher.publish(new UserRegisterMQResponse(user));
         return user;
     }
 
@@ -60,7 +60,7 @@ public class UserService implements UserDetailsService {
     public User loginUser(String username, String hashedPassword) throws UserLoginError {
         var user = processLogin(userRepository.findUserByUsernameIgnoreCase(username), hashedPassword, false);
 
-        eventPublisher.publish(new UserLoginResponse(user));
+        eventPublisher.publish(new UserLoginMQResponse(user));
         return user;
     }
 

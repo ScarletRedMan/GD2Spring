@@ -2,11 +2,11 @@ package ru.scarletredman.gd2spring.rabbit.response;
 
 import org.springframework.lang.NonNull;
 
-public abstract class EventResponse {
+public abstract class EventMQResponse {
 
     private final String amqpRoutingKey;
 
-    public EventResponse(@NonNull String routingKey) {
+    public EventMQResponse(@NonNull String routingKey) {
         amqpRoutingKey = routingKey;
     }
 

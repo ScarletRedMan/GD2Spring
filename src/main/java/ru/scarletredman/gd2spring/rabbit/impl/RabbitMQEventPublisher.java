@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Exchange;
 import ru.scarletredman.gd2spring.rabbit.MQEventPublisher;
-import ru.scarletredman.gd2spring.rabbit.response.EventResponse;
+import ru.scarletredman.gd2spring.rabbit.response.EventMQResponse;
 
 @RequiredArgsConstructor
 public class RabbitMQEventPublisher implements MQEventPublisher {
@@ -16,7 +16,7 @@ public class RabbitMQEventPublisher implements MQEventPublisher {
     private final Exchange exchange;
 
     @Override
-    public void publish(EventResponse response) {
+    public void publish(EventMQResponse response) {
         try {
             amqp.convertAndSend(exchange.getName(), response.getAmqpRoutingKey(), json.writeValueAsString(response));
         } catch (JsonProcessingException e) {
