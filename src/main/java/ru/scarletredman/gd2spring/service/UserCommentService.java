@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.UserComment;
+import ru.scarletredman.gd2spring.rabbit.MQEventPublisher;
+import ru.scarletredman.gd2spring.rabbit.response.acc_comment.AccountCommentDeleteResponse;
+import ru.scarletredman.gd2spring.rabbit.response.acc_comment.AccountCommentPublishResponse;
 import ru.scarletredman.gd2spring.repository.UserCommentRepository;
 import ru.scarletredman.gd2spring.service.exception.UserCommentError;
 import ru.scarletredman.gd2spring.service.type.UserCommentPage;
@@ -15,10 +18,12 @@ import ru.scarletredman.gd2spring.service.type.UserCommentPage;
 public class UserCommentService {
 
     private final UserCommentRepository userCommentRepository;
+    private final MQEventPublisher eventPublisher;
 
     @Transactional
     public void writeComment(UserComment comment) {
         userCommentRepository.save(comment);
+        eventPublisher.publish(new AccountCommentPublishResponse(comment));
     }
 
     @Transactional(rollbackFor = {UserCommentError.class})
@@ -35,6 +40,7 @@ public class UserCommentService {
         }
 
         userCommentRepository.delete(comment);
+        eventPublisher.publish(new AccountCommentDeleteResponse(comment));
     }
 
     @Transactional
