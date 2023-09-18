@@ -5,24 +5,24 @@ import jakarta.persistence.Embeddable;
 import java.sql.Timestamp;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Embeddable
 public class LevelRateInfo {
 
     @Column(name = "stars", nullable = false)
     private int stars = 0;
 
+    @Column(name = "requested_stars", nullable = false)
+    private int requestedStars = 0;
+
     @Column(name = "difficulty", nullable = false)
     private Difficulty difficulty = Difficulty.NONE;
 
-    @Column(name = "requested_difficulty", nullable = false)
-    private Difficulty requestedDifficulty = Difficulty.NONE;
-
     @Column(name = "rate_time")
     private Timestamp rateTime = null;
-
-    @Column(name = "length", nullable = false)
-    private Length length = Length.TINY;
 
     @Column(name = "is_featured", nullable = false)
     private boolean featured = false;
@@ -52,17 +52,5 @@ public class LevelRateInfo {
         Difficulty() {
             this(false);
         }
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    public enum Length {
-        TINY(0),
-        SHORT(1),
-        MEDIUM(2),
-        LONG(3),
-        XL(4);
-
-        private final int code;
     }
 }

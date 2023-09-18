@@ -2,7 +2,11 @@ package ru.scarletredman.gd2spring.model.embedable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Embeddable
 public class LevelData {
 
@@ -19,7 +23,7 @@ public class LevelData {
     private String info;
 
     @Column(name = "settings", nullable = false)
-    private String settings;
+    private String settings = "";
 
     @Column(name = "wt", nullable = false)
     private int wt = 0;
