@@ -14,7 +14,8 @@ public class LevelService {
     private final LevelRepository levelRepository;
 
     public Level uploadLevel(Level level) throws LevelError {
-        // todo
+        // todo: validation
+        levelRepository.save(level);
         return level;
     }
 
