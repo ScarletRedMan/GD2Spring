@@ -10,7 +10,7 @@ import ru.scarletredman.gd2spring.model.UserComment;
 @Repository
 public interface UserCommentRepository extends JpaRepository<UserComment, Long> {
 
-    List<UserComment> findAllByOwnerOrderByTimestampDesc(User user, Pageable pageable);
+    List<UserComment> findAllByOwnerOrderByTimestampDescIdDesc(User user, Pageable pageable);
 
     long countUserCommentsByOwner(User owner);
 }

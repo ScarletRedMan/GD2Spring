@@ -45,7 +45,7 @@ public class UserCommentService {
 
     @Transactional
     public UserCommentPage getComments(User user, int page, int size) {
-        var comments = userCommentRepository.findAllByOwnerOrderByTimestampDesc(user, PageRequest.of(page, size));
+        var comments = userCommentRepository.findAllByOwnerOrderByTimestampDescIdDesc(user, PageRequest.of(page, size));
         var total = userCommentRepository.countUserCommentsByOwner(user);
 
         return new UserCommentPage(comments, page, total);
