@@ -1,6 +1,7 @@
 package ru.scarletredman.gd2spring.controller.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Getter;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 
 @JsonSerialize(using = ResponseSerializer.class)
@@ -27,6 +28,7 @@ public final class LoginResponse implements ResponseSerializer.Response {
         return id + "," + userId;
     }
 
+    @Getter
     public enum ErrorReason {
         LOGIN_FAILED(-1),
         BANNED(-12);
