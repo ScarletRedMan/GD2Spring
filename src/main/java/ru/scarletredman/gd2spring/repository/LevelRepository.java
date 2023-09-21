@@ -5,4 +5,4 @@ import org.springframework.stereotype.Repository;
 import ru.scarletredman.gd2spring.model.Level;
 
 @Repository
-public interface LevelRepository extends JpaRepository<Level, Long> {}
+public interface LevelRepository extends JpaRepository<Level, Long>, CustomLevelRepository {}

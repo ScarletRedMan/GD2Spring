@@ -57,6 +57,7 @@ public class LevelController {
             @RequestParam(name = "coins", required = false, defaultValue = "0") int hasCoins,
             @RequestParam(name = "epic", required = false, defaultValue = "0") int isEpic,
             @RequestParam(name = "noStar", required = false, defaultValue = "0") int noStar,
+            @RequestParam(name = "demonFilter", required = false, defaultValue = "-1") int demonFilter,
             @RequestParam(name = "song", required = false, defaultValue = "0") int song,
             @RequestParam(name = "customSong", required = false, defaultValue = "0") int customSong) {
         return "-1";
