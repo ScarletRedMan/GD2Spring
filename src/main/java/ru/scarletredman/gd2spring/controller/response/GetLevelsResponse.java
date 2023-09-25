@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 import ru.scarletredman.gd2spring.util.JoinResponseUtil;
 
@@ -41,7 +42,15 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
         long total = 1;
         int offset = 1;
 
-        return levels + "#" + users + "#" + songs + "#" + total + "#" + offset + "#10";
+        String hash = generateHash();
+
+        return levels + "#" + users + "#" + songs + "#" + total + "#" + offset + "#10" + "#" + hash;
+    }
+
+    private String generateHash() {
+        var sb = new StringBuilder();
+
+        return DigestUtils.sha1Hex(sb.append("xI25fpAapCQg").toString());
     }
 
     @Getter
@@ -70,24 +79,24 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
             VERSION("5"),
             OWNER_USER_ID("6"),
             UNKNOWN1("8"), // always 10
-            DIFF_STARS("9"),
+            DIFFICULTY("9"),
             DOWNLOADS("10"),
-            AUDIO_TRACK("12"),
+            AUDIO_TRACK("12"), // build-in soundtrack is
             GAME_VERSION("13"),
             LIKES("14"),
             LENGTH("15"),
-            STAR_DEMON("17"),
-            STAR_STARS("18"),
-            STAR_FEATURED("19"),
-            STAR_AUTO("25"),
+            IS_DEMON("17"), // maybe
+            STARS("18"),
+            IS_FEATURED("19"),
+            IS_AUTO("25"),
             ORIGINAL("30"),
             FOR_TWO_PLAYERS("31"),
             SONG_ID("35"),
             COINS("37"),
             REQUIRED_STARS("39"),
             IS_LDM("40"),
-            STAR_EPIC("42"),
-            STAR_DEMON_DIFF("43"),
+            EPIC("42"),
+            DEMON_DIFFICULTY("43"),
             GAUNTLET("44"),
             OBJECTS("45"),
             UNKNOWN2("46"), // always 1

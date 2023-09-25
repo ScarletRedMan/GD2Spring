@@ -3,12 +3,12 @@ package ru.scarletredman.gd2spring.model.embedable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.sql.Timestamp;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 public class LevelRateInfo {
 
@@ -33,24 +33,25 @@ public class LevelRateInfo {
     @Getter
     @RequiredArgsConstructor
     public enum Difficulty {
-        NONE,
-        AUTO,
-        EASY,
-        NORMAL,
-        HARD,
-        HARDER,
-        INSANE,
-        DEMON(true),
-        EASY_DEMON(true),
-        MEDIUM_DEMON(true),
-        HARD_DEMON(true),
-        INSANE_DEMON(true),
-        EXTREME_DEMON(true);
+        NONE(0),
+        AUTO(1),
+        EASY(2),
+        NORMAL(3),
+        HARD(4),
+        HARDER(5),
+        INSANE(6),
+        DEMON(7, true),
+        EASY_DEMON(8, true),
+        MEDIUM_DEMON(9, true),
+        HARD_DEMON(10, true),
+        INSANE_DEMON(11, true),
+        EXTREME_DEMON(12, true);
 
+        private final int id;
         private final boolean demon;
 
-        Difficulty() {
-            this(false);
+        Difficulty(int id) {
+            this(id, false);
         }
     }
 }

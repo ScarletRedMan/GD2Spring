@@ -4,5 +4,5 @@ import ru.scarletredman.gd2spring.service.type.LevelListPage;
 
 public interface CustomLevelRepository {
 
-    LevelListPage getLevels(LevelListPage.Filters filters);
+    LevelListPage getLevels(LevelListPage.Filters filters, int offset);
 }
