@@ -37,6 +37,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.2.0'
 }
 
 tasks.named('test') {
