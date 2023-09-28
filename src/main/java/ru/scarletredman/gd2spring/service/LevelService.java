@@ -1,46 +1,19 @@
 package ru.scarletredman.gd2spring.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.scarletredman.gd2spring.model.Level;
 import ru.scarletredman.gd2spring.model.User;
-import ru.scarletredman.gd2spring.repository.LevelRepository;
 import ru.scarletredman.gd2spring.service.exception.LevelError;
 import ru.scarletredman.gd2spring.service.type.LevelListPage;
 
-@Service
-@RequiredArgsConstructor
-public class LevelService {
+public interface LevelService {
 
-    private final LevelRepository levelRepository;
+    Level uploadLevel(Level level) throws LevelError;
 
-    @Transactional(rollbackFor = LevelError.class)
-    public Level uploadLevel(Level level) throws LevelError {
-        // todo: validation
-        levelRepository.save(level);
-        return level;
-    }
+    void updateLevel(Level level) throws LevelError;
 
-    @Transactional(rollbackFor = LevelError.class)
-    public void updateLevel(Level level) throws LevelError {}
+    void deleteLevel(Level level);
 
-    @Transactional
-    public void deleteLevel(Level level) {
-        levelRepository.delete(level);
-    }
+    void deleteLevel(Level level, User owner) throws LevelError;
 
-    @Transactional(rollbackFor = LevelError.class)
-    public void deleteLevel(Level level, User owner) throws LevelError {
-        if (!level.getOwner().equals(owner)) {
-            throw new LevelError();
-        }
-
-        deleteLevel(level);
-    }
-
-    @Transactional(readOnly = true)
-    public LevelListPage getLevels(LevelListPage.Filters filters) {
-        return levelRepository.getLevels(filters);
-    }
+    LevelListPage getLevels(LevelListPage.Filters filters);
 }
