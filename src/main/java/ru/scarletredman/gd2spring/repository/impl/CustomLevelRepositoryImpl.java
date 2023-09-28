@@ -5,7 +5,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import ru.scarletredman.gd2spring.model.Level;
-import ru.scarletredman.gd2spring.model.Song;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.dto.GDLevelDTO;
 import ru.scarletredman.gd2spring.model.embedable.LevelFilters;
@@ -21,41 +20,61 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
     private EntityManager entityManager;
 
     @Override
-    public LevelListPage getLevels(LevelListPage.Filters filters, int offset) {
-        final String searchLevelName;
-        {
-            var temp = filters.name().trim();
-            if (temp.isEmpty()) {
-                searchLevelName = null;
-            } else {
-                if (!temp.matches(LEVEL_NAME_REGEX)) {
-                    return new LevelListPage(new ArrayList<>(), 0, 0);
+    public LevelListPage getLevels(LevelListPage.Filters filters) {
+        /*
+                final String searchLevelName;
+                {
+                    var temp = filters.name().trim();
+                    if (temp.isEmpty()) {
+                        searchLevelName = null;
+                    } else {
+                        if (!temp.matches(LEVEL_NAME_REGEX)) {
+                            return new LevelListPage(new ArrayList<>(), 0, 0);
+                        }
+                        searchLevelName = temp;
+                    }
                 }
-                searchLevelName = temp;
-            }
-        }
 
-        var criteria = entityManager.getCriteriaBuilder();
-        var query = criteria.createQuery(GDLevelDTO.class);
-        var rootLevel = query.from(Level.class);
-        var joinUser = rootLevel.<Level, User>join("users", JoinType.INNER);
-        var joinSong = rootLevel.<Level, Song>join("songs", JoinType.LEFT);
+                var criteria = entityManager.getCriteriaBuilder();
+                var query = criteria.createQuery(GDLevelDTO.class);
+                var rootLevel = query.from(Level.class);
+                var joinUser = rootLevel.<Level, User>join("owner", JoinType.INNER);
 
-        query.select(createLevelDTO(criteria, rootLevel, joinUser));
+                query.select(createLevelDTO(criteria, rootLevel, joinUser));
 
-        var criteriaFilters = new ArrayList<Predicate>();
-        if (searchLevelName != null) {
-            criteriaFilters.add(criteria.like(rootLevel.get("name"), searchLevelName + "%"));
-        }
-        // todo: implement filters
+                var criteriaFilters = new ArrayList<Predicate>();
+                if (searchLevelName != null) {
+                    criteriaFilters.add(criteria.like(rootLevel.get("name"), searchLevelName + "%"));
+                }
+                // todo: implement filters
 
-        query.where(criteriaFilters.toArray(new Predicate[0]));
+                query.where(criteriaFilters.toArray(new Predicate[0]));
 
-        var levels = entityManager.createQuery(query).getResultList();
+                var levels = entityManager.createQuery(query).getResultList();
 
-        var total = 0;
+                var total = 0;
+        */
+        // todo: remove after fix response format
+        var total = 1;
+        var levels = new ArrayList<GDLevelDTO>();
 
-        return new LevelListPage(levels, total, offset);
+        var level = entityManager.find(Level.class, 1);
+        var lvl = new GDLevelDTO(
+                level.getId(),
+                level.getName(),
+                level.getDescription(),
+                level.getData().getVersion(),
+                new GDLevelDTO.User(level.getOwner().getId(), level.getOwner().getUsername()),
+                level.getFilters(),
+                level.getRate(),
+                level.getDownloads(),
+                level.getSoundTrack(),
+                level.getLikes(),
+                null,
+                level.getObjects());
+        levels.add(lvl);
+
+        return new LevelListPage(levels, total, filters.page());
     }
 
     private CompoundSelection<GDLevelDTO> createLevelDTO(
@@ -65,24 +84,26 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
                 rootLevel.get("id"),
                 rootLevel.get("name"),
                 rootLevel.get("description"),
-                rootLevel.get("version"),
+                rootLevel.get("data").get("version"),
                 criteria.construct(GDLevelDTO.User.class, joinUser.get("id"), joinUser.get("username")),
                 criteria.construct(
                         LevelFilters.class,
-                        rootLevel.get("two_players"),
-                        rootLevel.get("has_ldm"),
-                        rootLevel.get("length")),
+                        rootLevel.get("filters").get("twoPlayers"),
+                        rootLevel.get("filters").get("lowDetailMode"),
+                        rootLevel.get("filters").get("length")),
                 criteria.construct(
                         LevelRateInfo.class,
-                        rootLevel.get("stars"),
-                        rootLevel.get("requested_stars"),
-                        rootLevel.get("difficulty"),
-                        rootLevel.get("rate_time"),
-                        rootLevel.get("is_featured"),
-                        rootLevel.get("is_epic")),
+                        rootLevel.get("rate").get("stars"),
+                        rootLevel.get("rate").get("requestedStars"),
+                        rootLevel.get("rate").get("coins"),
+                        rootLevel.get("rate").get("difficulty"),
+                        rootLevel.get("rate").get("rateTime"),
+                        rootLevel.get("rate").get("featured"),
+                        rootLevel.get("rate").get("epic")),
                 rootLevel.get("downloads"),
-                rootLevel.get("sound_track"),
+                rootLevel.get("soundTrack"),
                 rootLevel.get("likes"),
-                rootLevel.get("original"));
+                rootLevel.get("original"),
+                rootLevel.get("objects"));
     }
 }

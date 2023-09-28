@@ -5,12 +5,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
+import ru.scarletredman.gd2spring.controller.response.GetLevelsResponse;
 import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
+import ru.scarletredman.gd2spring.service.LevelService;
+import ru.scarletredman.gd2spring.service.type.LevelListPage;
+import ru.scarletredman.gd2spring.util.ResponseLogger;
 
 @GeometryDashAPI
 @RestController
 @RequiredArgsConstructor
 public class LevelController {
+
+    private final ResponseLogger responseLogger;
+    private final LevelService levelService;
 
     @GDAuthorizedOnly
     @PostMapping("/uploadGJLevel21.php")
@@ -42,7 +49,7 @@ public class LevelController {
     }
 
     @PostMapping("/getGJLevels21.php")
-    String getLevels(
+    GetLevelsResponse getLevels(
             @RequestParam(name = "type") int type,
             @RequestParam(name = "str") String levelName,
             @RequestParam(name = "diff") String difficulty, // "-" or number
@@ -60,7 +67,10 @@ public class LevelController {
             @RequestParam(name = "demonFilter", required = false, defaultValue = "-1") int demonFilter,
             @RequestParam(name = "song", required = false, defaultValue = "0") int song,
             @RequestParam(name = "customSong", required = false, defaultValue = "0") int customSong) {
-        return "-1";
+
+        var levels = levelService.getLevels(new LevelListPage.Filters(
+                "", null, null, 0, false, false, false, false, false, false, false, false, 0, 0, 0));
+        return responseLogger.result(new GetLevelsResponse(levels));
     }
 
     @GDAuthorizedOnly

@@ -1,5 +1,6 @@
 package ru.scarletredman.gd2spring.controller.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -8,9 +9,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
+import ru.scarletredman.gd2spring.model.dto.GDLevelDTO;
+import ru.scarletredman.gd2spring.service.type.LevelListPage;
 import ru.scarletredman.gd2spring.util.JoinResponseUtil;
 
 @Getter
+@JsonSerialize(using = ResponseSerializer.class)
 public final class GetLevelsResponse implements ResponseSerializer.Response {
 
     private static final String DELIMITER_LEVELS = "|";
@@ -20,12 +24,26 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
     private final List<LevelStat> levelStats = new ArrayList<>();
     private final List<UserStat> userStats = new ArrayList<>();
     private final List<SongStat> songStats = new ArrayList<>();
+    private final List<ChainData> chainData = new ArrayList<>();
+    private int offset;
+    private long total;
 
-    public GetLevelsResponse() {
-        init();
+    public GetLevelsResponse(LevelListPage page) {
+        init(page);
     }
 
-    private void init() {}
+    private void init(LevelListPage page) {
+        offset = page.offset();
+        total = page.total();
+
+        for (var level : page.levels()) {
+            levelStats.add(new LevelStat(level));
+            userStats.add(new UserStat(level.getUser()));
+            songStats.add(new SongStat(level));
+            chainData.add(new ChainData(
+                    level.getId(), level.getRate().getStars(), level.getRate().getCoins()));
+        }
+    }
 
     @Override
     public String getResponse() {
@@ -49,22 +67,56 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
 
     private String generateHash() {
         var sb = new StringBuilder();
+        for (var chain : chainData) {
+            chain.appendTo(sb);
+        }
 
         return DigestUtils.sha1Hex(sb.append("xI25fpAapCQg").toString());
     }
 
     @Getter
+    @JsonSerialize(using = ResponseSerializer.class)
     public static class LevelStat implements ResponseSerializer.Response {
 
         private static final String DELIMITER = ":";
 
         private final Map<Key, Object> stats = new EnumMap<>(Key.class);
 
-        public LevelStat() {
-            init();
+        public LevelStat(GDLevelDTO level) {
+            init(level);
         }
 
-        private void init() {}
+        private void init(GDLevelDTO level) {
+            stats.put(Key.ID, level.getId());
+            stats.put(Key.NAME, level.getName());
+            stats.put(Key.DESCRIPTION, level.getDescription());
+            stats.put(Key.VERSION, level.getVersion());
+            stats.put(Key.OWNER_USER_ID, level.getUser().id());
+            stats.put(Key.UNKNOWN1, 10);
+            stats.put(Key.DIFFICULTY, level.getRate().getDifficulty().getGdDiff()); // todo: check it
+            stats.put(Key.DOWNLOADS, level.getDownloads());
+            stats.put(Key.AUDIO_TRACK, level.getAudioTrack());
+            stats.put(Key.GAME_VERSION, 21);
+            stats.put(Key.LIKES, level.getLikes());
+            stats.put(Key.LENGTH, level.getFilters().getLength().getCode());
+            stats.put(Key.IS_DEMON, level.getRate().getDifficulty().isDemon() ? 1 : 0);
+            stats.put(Key.STARS, level.getRate().getStars());
+            stats.put(Key.IS_FEATURED, level.getRate().isFeatured() ? 1 : 0);
+            stats.put(Key.IS_AUTO, level.getRate().getDifficulty().isAuto() ? 1 : 0);
+            stats.put(Key.ORIGINAL, level.getOriginalLevel() == null ? 0 : level.getOriginalLevel()); // todo: check it
+            stats.put(Key.FOR_TWO_PLAYERS, level.getFilters().isTwoPlayers() ? 1 : 0);
+            stats.put(Key.SONG_ID, level.getSong() == null ? 0 : level.getSong().getId());
+            stats.put(Key.COINS, level.getRate().getCoins());
+            stats.put(Key.REQESTED_STARS, level.getRate().getRequestedStars());
+            stats.put(Key.IS_LDM, level.getFilters().isLowDetailMode() ? 1 : 0);
+            stats.put(Key.EPIC, level.getRate().isEpic());
+            stats.put(Key.DEMON_DIFFICULTY, level.getRate().getDifficulty().getDemonDiff()); // todo: check it
+            stats.put(Key.OBJECTS, level.getObjects());
+            stats.put(Key.UNKNOWN2, 1);
+            stats.put(Key.UNKNOWN3, 2);
+
+            // todo: gauntlet
+        }
 
         @Override
         public String getResponse() {
@@ -93,7 +145,7 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
             FOR_TWO_PLAYERS("31"),
             SONG_ID("35"),
             COINS("37"),
-            REQUIRED_STARS("39"),
+            REQESTED_STARS("39"),
             IS_LDM("40"),
             EPIC("42"),
             DEMON_DIFFICULTY("43"),
@@ -112,28 +164,33 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
         }
     }
 
-    public record UserStat(UserEntry user) implements ResponseSerializer.Response {
+    @JsonSerialize(using = ResponseSerializer.class)
+    public record UserStat(GDLevelDTO.User user) implements ResponseSerializer.Response {
 
         @Override
         public String getResponse() {
             return user.id() + ":" + user.username() + ":" + user.id();
         }
-
-        public record UserEntry(long id, String username) {}
     }
 
     @Getter
+    @JsonSerialize(using = ResponseSerializer.class)
     public static class SongStat implements ResponseSerializer.Response {
 
         private static final String DELIMITER = "~|~";
 
         private final Map<Key, Object> stats = new EnumMap<>(Key.class);
 
-        public SongStat() {
-            init();
+        public SongStat(GDLevelDTO level) {
+            init(level);
         }
 
-        private void init() {}
+        private void init(GDLevelDTO level) {
+            var song = level.getSong();
+            if (song == null) return;
+
+            // todo
+        }
 
         public void setName(String name) {
             stats.put(Key.NAME, name.replaceAll("#", ""));
@@ -163,6 +220,14 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
             public String getCode() {
                 return code;
             }
+        }
+    }
+
+    public record ChainData(long levelId, int stars, int coins) {
+
+        public void appendTo(StringBuilder sb) {
+            char[] ch = Long.toString(levelId).toCharArray();
+            sb.append(ch[0]).append(ch[ch.length - 1]).append(stars).append(coins);
         }
     }
 }

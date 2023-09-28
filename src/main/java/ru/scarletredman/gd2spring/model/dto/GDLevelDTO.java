@@ -23,7 +23,8 @@ public class GDLevelDTO {
     private final int audioTrack;
     private final int likes;
     private final Long originalLevel;
+    private final int objects;
     private Song song = null;
 
-    public record User(long userId, String username) {}
+    public record User(long id, String username) {}
 }

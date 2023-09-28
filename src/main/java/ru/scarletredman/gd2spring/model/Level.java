@@ -61,6 +61,9 @@ public class Level {
     @Column(name = "song_id", nullable = false)
     private int songId = 0;
 
+    @Column(name = "objects", nullable = false)
+    private int objects = 0;
+
     public Level() {}
 
     public Level(User owner, String name) {

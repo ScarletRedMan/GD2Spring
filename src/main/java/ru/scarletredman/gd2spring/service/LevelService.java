@@ -40,7 +40,7 @@ public class LevelService {
     }
 
     @Transactional(readOnly = true)
-    public LevelListPage getLevels(LevelListPage.Filters filters, int offset) {
-        return levelRepository.getLevels(filters, offset);
+    public LevelListPage getLevels(LevelListPage.Filters filters) {
+        return levelRepository.getLevels(filters);
     }
 }
