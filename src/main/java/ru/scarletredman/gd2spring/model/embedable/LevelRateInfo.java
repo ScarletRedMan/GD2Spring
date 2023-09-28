@@ -44,11 +44,11 @@ public class LevelRateInfo {
         HARDER(5, "Harder", 40),
         INSANE(6, "Insane", 50),
         DEMON(7, 0, "Demon"),
-        EASY_DEMON(8, 1, "Easy demon"),
-        MEDIUM_DEMON(9, 2, "Medium demon"),
-        HARD_DEMON(10, 3, "Hard demon"),
-        INSANE_DEMON(11, 4, "Insane demon"),
-        EXTREME_DEMON(12, 5, "Extreme demon");
+        EASY_DEMON(8, 3, "Easy demon"),
+        MEDIUM_DEMON(9, 4, "Medium demon"),
+        HARD_DEMON(10, 0, "Hard demon"),
+        INSANE_DEMON(11, 5, "Insane demon"),
+        EXTREME_DEMON(12, 6, "Extreme demon");
 
         private final int id;
         private final String shortName;
