@@ -6,7 +6,7 @@ import ru.scarletredman.gd2spring.model.dto.GDLevelDTO;
 import ru.scarletredman.gd2spring.model.embedable.LevelFilters;
 import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
 
-public record LevelListPage(List<GDLevelDTO> levels, int total, int offset) {
+public record LevelListPage(List<GDLevelDTO> levels, long total, int offset) {
 
     public record Filters(
             String name,

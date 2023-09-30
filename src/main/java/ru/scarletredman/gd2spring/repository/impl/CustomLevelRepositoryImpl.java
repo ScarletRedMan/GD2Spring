@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
+import org.springframework.lang.Nullable;
 import ru.scarletredman.gd2spring.model.Level;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.dto.GDLevelDTO;
@@ -35,25 +36,55 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
         }
 
         var criteria = entityManager.getCriteriaBuilder();
+
+        var selectQuery = selectLevelsQuery(criteria, searchLevelName, filters);
+        var levels = entityManager
+                .createQuery(selectQuery)
+                .setFirstResult(10 * filters.page())
+                .setMaxResults(10)
+                .getResultList();
+
+        var total = entityManager
+                .createQuery(countLevelsQuery(criteria, searchLevelName, filters))
+                .getSingleResult();
+
+        return new LevelListPage(levels, total, filters.page());
+    }
+
+    private CriteriaQuery<GDLevelDTO> selectLevelsQuery(
+            CriteriaBuilder criteria, @Nullable String levelName, LevelListPage.Filters filters) {
         var query = criteria.createQuery(GDLevelDTO.class);
         var rootLevel = query.from(Level.class);
         var joinUser = rootLevel.<Level, User>join("owner", JoinType.INNER);
 
         query.select(createLevelDTO(criteria, rootLevel, joinUser));
+        query.where(applyFilters(criteria, rootLevel, levelName, filters));
+        return query;
+    }
 
+    private CriteriaQuery<Long> countLevelsQuery(
+            CriteriaBuilder criteria, @Nullable String levelName, LevelListPage.Filters filters) {
+        var query = criteria.createQuery(Long.class);
+        var rootLevel = query.from(Level.class);
+
+        query.select(criteria.count(rootLevel));
+        query.where(applyFilters(criteria, rootLevel, levelName, filters));
+        return query;
+    }
+
+    private Predicate[] applyFilters(
+            CriteriaBuilder criteria,
+            Root<Level> rootLevel,
+            @Nullable String levelName,
+            LevelListPage.Filters filters) {
         var criteriaFilters = new ArrayList<Predicate>();
-        if (searchLevelName != null) {
-            criteriaFilters.add(criteria.like(rootLevel.get("name"), searchLevelName + "%"));
+        if (levelName != null) {
+            criteriaFilters.add(criteria.like(rootLevel.get("name"), levelName + "%"));
         }
         // todo: implement filters
+        // todo: fix filters
 
-        query.where(criteriaFilters.toArray(new Predicate[0]));
-
-        var levels = entityManager.createQuery(query).getResultList();
-
-        var total = 0;
-
-        return new LevelListPage(levels, total, filters.page());
+        return criteriaFilters.toArray(new Predicate[0]);
     }
 
     private CompoundSelection<GDLevelDTO> createLevelDTO(
