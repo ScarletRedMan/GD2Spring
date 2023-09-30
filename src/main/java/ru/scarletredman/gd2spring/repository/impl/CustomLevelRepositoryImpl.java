@@ -21,58 +21,37 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
 
     @Override
     public LevelListPage getLevels(LevelListPage.Filters filters) {
-        /*
-                final String searchLevelName;
-                {
-                    var temp = filters.name().trim();
-                    if (temp.isEmpty()) {
-                        searchLevelName = null;
-                    } else {
-                        if (!temp.matches(LEVEL_NAME_REGEX)) {
-                            return new LevelListPage(new ArrayList<>(), 0, 0);
-                        }
-                        searchLevelName = temp;
-                    }
+        final String searchLevelName;
+        {
+            var temp = filters.name().trim();
+            if (temp.isEmpty()) {
+                searchLevelName = null;
+            } else {
+                if (!temp.matches(LEVEL_NAME_REGEX)) {
+                    return new LevelListPage(new ArrayList<>(), 0, 0);
                 }
+                searchLevelName = temp;
+            }
+        }
 
-                var criteria = entityManager.getCriteriaBuilder();
-                var query = criteria.createQuery(GDLevelDTO.class);
-                var rootLevel = query.from(Level.class);
-                var joinUser = rootLevel.<Level, User>join("owner", JoinType.INNER);
+        var criteria = entityManager.getCriteriaBuilder();
+        var query = criteria.createQuery(GDLevelDTO.class);
+        var rootLevel = query.from(Level.class);
+        var joinUser = rootLevel.<Level, User>join("owner", JoinType.INNER);
 
-                query.select(createLevelDTO(criteria, rootLevel, joinUser));
+        query.select(createLevelDTO(criteria, rootLevel, joinUser));
 
-                var criteriaFilters = new ArrayList<Predicate>();
-                if (searchLevelName != null) {
-                    criteriaFilters.add(criteria.like(rootLevel.get("name"), searchLevelName + "%"));
-                }
-                // todo: implement filters
+        var criteriaFilters = new ArrayList<Predicate>();
+        if (searchLevelName != null) {
+            criteriaFilters.add(criteria.like(rootLevel.get("name"), searchLevelName + "%"));
+        }
+        // todo: implement filters
 
-                query.where(criteriaFilters.toArray(new Predicate[0]));
+        query.where(criteriaFilters.toArray(new Predicate[0]));
 
-                var levels = entityManager.createQuery(query).getResultList();
+        var levels = entityManager.createQuery(query).getResultList();
 
-                var total = 0;
-        */
-        // todo: remove after fix response format
-        var total = 1;
-        var levels = new ArrayList<GDLevelDTO>();
-
-        var level = entityManager.find(Level.class, 1);
-        var lvl = new GDLevelDTO(
-                level.getId(),
-                level.getName(),
-                level.getDescription(),
-                level.getData().getVersion(),
-                new GDLevelDTO.User(level.getOwner().getId(), level.getOwner().getUsername()),
-                level.getFilters(),
-                level.getRate(),
-                level.getDownloads(),
-                level.getSoundTrack(),
-                level.getLikes(),
-                null,
-                level.getObjects());
-        levels.add(lvl);
+        var total = 0;
 
         return new LevelListPage(levels, total, filters.page());
     }
@@ -96,6 +75,7 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
                         rootLevel.get("rate").get("stars"),
                         rootLevel.get("rate").get("requestedStars"),
                         rootLevel.get("rate").get("coins"),
+                        rootLevel.get("rate").get("verifiedCoins"),
                         rootLevel.get("rate").get("difficulty"),
                         rootLevel.get("rate").get("rateTime"),
                         rootLevel.get("rate").get("featured"),
@@ -103,7 +83,7 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
                 rootLevel.get("downloads"),
                 rootLevel.get("soundTrack"),
                 rootLevel.get("likes"),
-                rootLevel.get("original"),
+                rootLevel.get("original").get("id"),
                 rootLevel.get("objects"));
     }
 }
