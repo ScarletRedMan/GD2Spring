@@ -47,6 +47,7 @@ public class TestConfig {
     Level createTestLevel(User owner, String name) {
         var level = new Level(owner, name);
         level.setDescription("Hello world!");
+        level.setObjects(4);
 
         var data = level.getData();
         data.setExtra(

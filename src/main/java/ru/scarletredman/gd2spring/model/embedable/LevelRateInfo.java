@@ -21,6 +21,9 @@ public class LevelRateInfo {
     @Column(name = "coins", nullable = false)
     private int coins = 0;
 
+    @Column(name = "verified_coins", nullable = false)
+    private boolean verifiedCoins = false;
+
     @Column(name = "difficulty", nullable = false)
     private Difficulty difficulty = Difficulty.NONE;
 

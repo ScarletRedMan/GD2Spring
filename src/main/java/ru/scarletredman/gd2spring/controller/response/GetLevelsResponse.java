@@ -1,12 +1,11 @@
 package ru.scarletredman.gd2spring.controller.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 import ru.scarletredman.gd2spring.model.dto.GDLevelDTO;
@@ -41,7 +40,7 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
             userStats.add(new UserStat(level.getUser()));
             songStats.add(new SongStat(level));
             chainData.add(new ChainData(
-                    level.getId(), level.getRate().getStars(), level.getRate().getCoins()));
+                    level.getId(), level.getRate().getStars(), level.getRate().isVerifiedCoins()));
         }
     }
 
@@ -57,12 +56,10 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
         String songs = String.join(
                 DELIMITER_SONGS, songStats.stream().map(SongStat::getResponse).toList());
 
-        long total = 1;
-        int offset = 1;
-
+        String pageInfo = total + ":" + offset + ":10";
         String hash = generateHash();
 
-        return levels + "#" + users + "#" + songs + "#" + total + "#" + offset + "#10" + "#" + hash;
+        return levels + "#" + users + "#" + songs + "#" + pageInfo + "#" + hash;
     }
 
     private String generateHash() {
@@ -89,11 +86,11 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
         private void init(GDLevelDTO level) {
             stats.put(Key.ID, level.getId());
             stats.put(Key.NAME, level.getName());
-            stats.put(Key.DESCRIPTION, level.getDescription());
+            setDescription(level.getDescription());
             stats.put(Key.VERSION, level.getVersion());
             stats.put(Key.OWNER_USER_ID, level.getUser().id());
             stats.put(Key.UNKNOWN1, 10);
-            stats.put(Key.DIFFICULTY, level.getRate().getDifficulty().getGdDiff()); // todo: check it
+            stats.put(Key.DIFFICULTY, level.getRate().getDifficulty().getGdDiff());
             stats.put(Key.DOWNLOADS, level.getDownloads());
             stats.put(Key.AUDIO_TRACK, level.getAudioTrack());
             stats.put(Key.GAME_VERSION, 21);
@@ -103,19 +100,24 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
             stats.put(Key.STARS, level.getRate().getStars());
             stats.put(Key.IS_FEATURED, level.getRate().isFeatured() ? 1 : 0);
             stats.put(Key.IS_AUTO, level.getRate().getDifficulty().isAuto() ? 1 : 0);
-            stats.put(Key.ORIGINAL, level.getOriginalLevel() == null ? 0 : level.getOriginalLevel()); // todo: check it
+            stats.put(Key.ORIGINAL, level.getOriginalLevel() == null ? 0 : level.getOriginalLevel());
             stats.put(Key.FOR_TWO_PLAYERS, level.getFilters().isTwoPlayers() ? 1 : 0);
             stats.put(Key.SONG_ID, level.getSong() == null ? 0 : level.getSong().getId());
             stats.put(Key.COINS, level.getRate().getCoins());
+            stats.put(Key.VERIFIED_COINS, level.getRate().isVerifiedCoins() ? 1 : 0);
             stats.put(Key.REQESTED_STARS, level.getRate().getRequestedStars());
             stats.put(Key.IS_LDM, level.getFilters().isLowDetailMode() ? 1 : 0);
             stats.put(Key.EPIC, level.getRate().isEpic());
-            stats.put(Key.DEMON_DIFFICULTY, level.getRate().getDifficulty().getDemonDiff()); // todo: check it
+            stats.put(Key.DEMON_DIFFICULTY, level.getRate().getDifficulty().getDemonDiff());
             stats.put(Key.OBJECTS, level.getObjects());
             stats.put(Key.UNKNOWN2, 1);
             stats.put(Key.UNKNOWN3, 2);
 
             // todo: gauntlet
+        }
+
+        public void setDescription(String description) {
+            stats.put(Key.DESCRIPTION, Base64.encodeBase64String(description.getBytes(StandardCharsets.UTF_8)));
         }
 
         @Override
@@ -145,6 +147,7 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
             FOR_TWO_PLAYERS("31"),
             SONG_ID("35"),
             COINS("37"),
+            VERIFIED_COINS("38"),
             REQESTED_STARS("39"),
             IS_LDM("40"),
             EPIC("42"),
@@ -189,7 +192,15 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
             var song = level.getSong();
             if (song == null) return;
 
-            // todo
+            stats.put(Key.ID, song.getId());
+            setName(song.getName());
+            stats.put(Key.AUTHOR_ID, song.getAuthorId());
+            stats.put(Key.AUTHOR_NAME, song.getAuthorName());
+            stats.put(Key.SIZE, song.getSize());
+            stats.put(Key.UNKNOWN1, "");
+            stats.put(Key.UNKNOWN2, "");
+            stats.put(Key.UNKNOWN3, 1);
+            stats.put(Key.DOWNLOAD_URL, song.getDownloadUrl());
         }
 
         public void setName(String name) {
@@ -223,11 +234,11 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
         }
     }
 
-    public record ChainData(long levelId, int stars, int coins) {
+    public record ChainData(long levelId, int stars, boolean verifiedCoins) {
 
         public void appendTo(StringBuilder sb) {
             char[] ch = Long.toString(levelId).toCharArray();
-            sb.append(ch[0]).append(ch[ch.length - 1]).append(stars).append(coins);
+            sb.append(ch[0]).append(ch[ch.length - 1]).append(stars).append(verifiedCoins ? 1 : 0);
         }
     }
 }
