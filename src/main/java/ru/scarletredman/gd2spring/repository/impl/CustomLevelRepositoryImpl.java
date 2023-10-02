@@ -123,6 +123,12 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
         if (levelName != null) {
             criteriaFilters.add(criteria.like(criteria.lower(rootLevel.get("name")), levelName.toLowerCase() + "%"));
         }
+        if (!filters.difficulty().isEmpty()) {
+            criteriaFilters.add(rootLevel.get("rate").get("difficulty").in(filters.difficulty()));
+        }
+        if (!filters.length().isEmpty()) {
+            criteriaFilters.add(rootLevel.get("filters").get("length").in(filters.length()));
+        }
         // todo: implement filters
         // todo: fix filters
 
