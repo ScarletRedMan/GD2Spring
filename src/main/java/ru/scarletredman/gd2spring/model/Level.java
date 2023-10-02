@@ -30,9 +30,8 @@ public class Level {
     @JoinColumn(name = "owner", nullable = false)
     private User owner;
 
-    @ManyToOne
-    @JoinColumn(name = "original")
-    private Level original = null;
+    @Column(name = "original")
+    private Long original = null;
 
     @Embedded
     private LevelRateInfo rate = new LevelRateInfo();

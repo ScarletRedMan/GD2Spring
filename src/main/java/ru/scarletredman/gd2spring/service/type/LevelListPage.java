@@ -20,6 +20,7 @@ public record LevelListPage(List<GDLevelDTO> levels, long total, int offset) {
             boolean coins,
             boolean epic,
             boolean noStar,
+            boolean hasStar,
             int song,
-            int customSong) {}
+            boolean customSong) {}
 }

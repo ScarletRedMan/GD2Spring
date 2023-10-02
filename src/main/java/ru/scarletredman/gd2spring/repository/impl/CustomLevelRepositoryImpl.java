@@ -61,10 +61,11 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
     }
 
     private boolean checkControversies(LevelListPage.Filters filters) {
+        if (filters.page() < 0) return true;
         if (filters.onlyCompleted() && filters.onlyUncompleted()) return true;
         if ((filters.featured() || filters.epic()) && filters.noStar()) return true;
-        if (filters.song() != 0 && filters.customSong() != 0) return true;
-        if (filters.song() < 0 && filters.customSong() < 0) return true;
+        if (filters.song() < -1) return true;
+        if (filters.hasStar() && filters.noStar()) return true;
         return false;
     }
 
@@ -129,8 +130,34 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
         if (!filters.length().isEmpty()) {
             criteriaFilters.add(rootLevel.get("filters").get("length").in(filters.length()));
         }
-        // todo: implement filters
-        // todo: fix filters
+        // todo: completed and uncompleted (need player leaderboards)
+        if (filters.featured()) {
+            criteriaFilters.add(criteria.isTrue(rootLevel.get("rate").get("featured")));
+        }
+        if (filters.original()) {
+            criteriaFilters.add(rootLevel.get("original").isNull());
+        }
+        if (filters.forTwoPlayers()) {
+            criteriaFilters.add(criteria.isTrue(rootLevel.get("filters").get("twoPlayers")));
+        }
+        if (filters.coins()) {
+            criteriaFilters.add(criteria.gt(rootLevel.get("rate").get("coins"), 0));
+        }
+        if (filters.epic()) {
+            criteriaFilters.add(criteria.isTrue(rootLevel.get("rate").get("epic")));
+        }
+        if (filters.noStar()) {
+            criteriaFilters.add(criteria.equal(rootLevel.get("rate").get("stars"), 0));
+        }
+        if (filters.hasStar()) {
+            criteriaFilters.add(criteria.gt(rootLevel.get("rate").get("stars"), 0));
+        }
+        if (filters.song() != -1 && !filters.customSong()) {
+            criteriaFilters.add(criteria.equal(rootLevel.get("soundTrack"), filters.song()));
+        }
+        if (filters.song() != -1 && filters.customSong()) {
+            criteriaFilters.add(criteria.equal(rootLevel.get("songId"), filters.song()));
+        }
 
         return criteriaFilters.toArray(new Predicate[0]);
     }
@@ -162,7 +189,7 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
                 rootLevel.get("downloads"),
                 rootLevel.get("soundTrack"),
                 rootLevel.get("likes"),
-                rootLevel.get("original").get("id"),
+                rootLevel.get("original"),
                 rootLevel.get("objects"));
     }
 }
