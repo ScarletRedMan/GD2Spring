@@ -6,9 +6,13 @@ import org.springframework.context.annotation.Configuration;
 import ru.scarletredman.gd2spring.model.Level;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.UserComment;
+import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
 import ru.scarletredman.gd2spring.service.LevelService;
 import ru.scarletredman.gd2spring.service.UserCommentService;
 import ru.scarletredman.gd2spring.service.UserService;
+
+import java.sql.Timestamp;
+import java.time.Instant;
 
 @Configuration
 @RequiredArgsConstructor
@@ -40,14 +44,19 @@ public class TestConfig {
             userCommentService.writeComment(new UserComment(u, "Hello world!!!"));
         }
 
-        var level = createTestLevel(user, "Test level");
-        levelService.uploadLevel(level);
+        for (int i = 0; i < 30; i++) {
+            var level = createTestLevel(user, "Test level " + i, i, i * 2, i % 4, i % 3 == 0);
+            levelService.uploadLevel(level);
+        }
     }
 
-    Level createTestLevel(User owner, String name) {
+    Level createTestLevel(User owner, String name, int likes, int downloads, int stars, boolean featured) {
         var level = new Level(owner, name);
         level.setDescription("Hello world!");
         level.setObjects(4);
+
+        level.setLikes(likes);
+        level.setDownloads(downloads);
 
         var data = level.getData();
         data.setExtra(
@@ -58,6 +67,13 @@ public class TestConfig {
 
         var rate = level.getRate();
         rate.setRequestedStars(10);
+        rate.setStars(stars);
+        rate.setDifficulty(LevelRateInfo.Difficulty.values()[stars]);
+        rate.setFeatured(featured);
+        rate.setEpic(featured);
+        if (stars != 0 || featured) {
+            rate.setRateTime(Timestamp.from(Instant.now()));
+        }
 
         return level;
     }
