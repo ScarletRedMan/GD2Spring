@@ -3,6 +3,8 @@ package ru.scarletredman.gd2spring.model.embedable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.sql.Timestamp;
+import java.util.LinkedList;
+import java.util.List;
 import lombok.*;
 
 @Getter
@@ -70,6 +72,43 @@ public class LevelRateInfo {
 
         public boolean isAuto() {
             return this == AUTO;
+        }
+
+        public static List<Difficulty> parseGDSearch(String input, int demonFilter) {
+            var list = new LinkedList<Difficulty>();
+            if (input.equals("-")) return list;
+
+            var nums = input.split(",");
+            for (var num : nums) {
+                int diff;
+                try {
+                    diff = Integer.parseInt(num);
+                } catch (NumberFormatException ignore) {
+                    continue;
+                }
+
+                switch (diff) {
+                    case -1 -> list.add(NONE);
+                    case 1 -> list.add(EASY);
+                    case 2 -> list.add(NORMAL);
+                    case 3 -> list.add(HARD);
+                    case 4 -> list.add(HARDER);
+                    case 5 -> list.add(INSANE);
+                    case -3 -> list.add(AUTO);
+                    case -2 -> {
+                        switch (demonFilter) {
+                            case 0 -> list.add(DEMON);
+                            case 1 -> list.add(EASY_DEMON);
+                            case 2 -> list.add(MEDIUM_DEMON);
+                            case 3 -> list.add(HARD_DEMON);
+                            case 4 -> list.add(INSANE_DEMON);
+                            case 5 -> list.add(EXTREME_DEMON);
+                        }
+                    }
+                }
+            }
+
+            return list;
         }
     }
 }

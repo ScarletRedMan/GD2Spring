@@ -63,9 +63,6 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
     private boolean checkControversies(LevelListPage.Filters filters) {
         if (filters.onlyCompleted() && filters.onlyUncompleted()) return true;
         if ((filters.featured() || filters.epic()) && filters.noStar()) return true;
-        if (filters.demonFilter() != 0
-                && filters.difficulty() != null
-                && !filters.difficulty().isDemon()) return true;
         if (filters.song() != 0 && filters.customSong() != 0) return true;
         if (filters.song() < 0 && filters.customSong() < 0) return true;
         return false;

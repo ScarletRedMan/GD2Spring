@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
 import ru.scarletredman.gd2spring.controller.response.GetLevelsResponse;
+import ru.scarletredman.gd2spring.model.embedable.LevelFilters;
+import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
 import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
 import ru.scarletredman.gd2spring.service.LevelService;
 import ru.scarletredman.gd2spring.service.type.LevelListPage;
@@ -52,8 +54,8 @@ public class LevelController {
     GetLevelsResponse getLevels(
             @RequestParam(name = "type") int type,
             @RequestParam(name = "str") String levelName,
-            @RequestParam(name = "diff") String difficulty, // "-" or number
-            @RequestParam(name = "len") String length, // "-" or number
+            @RequestParam(name = "diff") String difficulty, // "-" or numbers
+            @RequestParam(name = "len") String length, // "-" or numbers
             @RequestParam(name = "page") int page,
             @RequestParam(name = "total") int total,
             @RequestParam(name = "uncompleted", required = false, defaultValue = "0") int isOnlyUncompleted,
@@ -64,12 +66,25 @@ public class LevelController {
             @RequestParam(name = "coins", required = false, defaultValue = "0") int hasCoins,
             @RequestParam(name = "epic", required = false, defaultValue = "0") int isEpic,
             @RequestParam(name = "noStar", required = false, defaultValue = "0") int noStar,
-            @RequestParam(name = "demonFilter", required = false, defaultValue = "-1") int demonFilter,
+            @RequestParam(name = "demonFilter", required = false, defaultValue = "0") int demonFilter,
             @RequestParam(name = "song", required = false, defaultValue = "0") int song,
             @RequestParam(name = "customSong", required = false, defaultValue = "0") int customSong) {
 
         var filters = new LevelListPage.Filters(
-                levelName, null, null, page, false, false, false, false, false, false, false, false, 0, 0, 0);
+                levelName,
+                LevelRateInfo.Difficulty.parseGDSearch(difficulty, demonFilter),
+                LevelFilters.Length.parseGDSearch(length),
+                page,
+                isOnlyCompleted == 1,
+                isOnlyUncompleted == 1,
+                isFeatured == 1,
+                isOriginal == 1,
+                isForTwoPlayers == 1,
+                hasCoins == 1,
+                isEpic == 1,
+                noStar == 1,
+                song,
+                customSong);
 
         var levels = levelService.getLevels(filters);
         return responseLogger.result(new GetLevelsResponse(levels));
