@@ -1,9 +1,11 @@
 package ru.scarletredman.gd2spring.repository.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import org.springframework.lang.Nullable;
 import ru.scarletredman.gd2spring.model.Level;
 import ru.scarletredman.gd2spring.model.User;
@@ -41,12 +43,15 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
 
         var criteria = entityManager.getCriteriaBuilder();
 
+        var selectById = selectById(searchLevelName, criteria);
         var selectQuery = selectLevelsQuery(criteria, searchLevelName, filters);
-        var levels = entityManager
+        var levels = new LinkedList<GDLevelDTO>();
+        if (selectById != null) levels.add(selectById);
+        levels.addAll(entityManager
                 .createQuery(selectQuery)
                 .setFirstResult(10 * filters.page())
                 .setMaxResults(10)
-                .getResultList();
+                .getResultList());
 
         var total = entityManager
                 .createQuery(countLevelsQuery(criteria, searchLevelName, filters))
@@ -64,6 +69,30 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
         if (filters.song() != 0 && filters.customSong() != 0) return true;
         if (filters.song() < 0 && filters.customSong() < 0) return true;
         return false;
+    }
+
+    private @Nullable GDLevelDTO selectById(@Nullable String input, CriteriaBuilder criteria) {
+        if (input == null) return null;
+
+        long levelId;
+        try {
+            levelId = Long.parseLong(input);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+
+        var query = criteria.createQuery(GDLevelDTO.class);
+        var rootLevel = query.from(Level.class);
+        var joinUser = rootLevel.<Level, User>join("owner", JoinType.INNER);
+
+        query.select(createLevelDTO(criteria, rootLevel, joinUser));
+        query.where(criteria.equal(rootLevel.get("id"), levelId));
+
+        try {
+            return entityManager.createQuery(query).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     private CriteriaQuery<GDLevelDTO> selectLevelsQuery(
