@@ -1,5 +1,7 @@
 package ru.scarletredman.gd2spring.config;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -10,9 +12,6 @@ import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
 import ru.scarletredman.gd2spring.service.LevelService;
 import ru.scarletredman.gd2spring.service.UserCommentService;
 import ru.scarletredman.gd2spring.service.UserService;
-
-import java.sql.Timestamp;
-import java.time.Instant;
 
 @Configuration
 @RequiredArgsConstructor

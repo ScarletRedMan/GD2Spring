@@ -56,7 +56,7 @@ public final class GetLevelsResponse implements ResponseSerializer.Response {
         String songs = String.join(
                 DELIMITER_SONGS, songStats.stream().map(SongStat::getResponse).toList());
 
-        String pageInfo = total + ":" + offset + ":10";
+        String pageInfo = total + ":" + (offset * 10) + ":10";
         String hash = generateHash();
 
         return levels + "#" + users + "#" + songs + "#" + pageInfo + "#" + hash;
