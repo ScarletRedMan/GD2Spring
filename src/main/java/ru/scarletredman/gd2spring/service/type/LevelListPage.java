@@ -13,7 +13,7 @@ public record LevelListPage(List<GDLevelDTO> levels, long total, int offset) {
             @Nullable LevelRateInfo.Difficulty difficulty,
             @Nullable LevelFilters.Length length,
             int page,
-            boolean uncompleted,
+            boolean onlyCompleted,
             boolean onlyUncompleted,
             boolean featured,
             boolean original,

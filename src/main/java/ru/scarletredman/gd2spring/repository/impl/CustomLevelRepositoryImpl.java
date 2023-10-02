@@ -22,6 +22,10 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
 
     @Override
     public LevelListPage getLevels(LevelListPage.Filters filters) {
+        if (checkControversies(filters)) {
+            return new LevelListPage(new ArrayList<>(), 0, 0);
+        }
+
         final String searchLevelName;
         {
             var temp = filters.name().trim();
@@ -49,6 +53,16 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
                 .getSingleResult();
 
         return new LevelListPage(levels, total, filters.page());
+    }
+
+    private boolean checkControversies(LevelListPage.Filters filters) {
+        if (filters.onlyCompleted() && filters.onlyUncompleted()) return true;
+        if ((filters.featured() || filters.epic()) && filters.noStar()) return true;
+        if (filters.demonFilter() != 0
+                && filters.difficulty() != null
+                && !filters.difficulty().isDemon()) return true;
+        if (filters.song() != 0 && filters.customSong() != 0) return true;
+        return false;
     }
 
     private CriteriaQuery<GDLevelDTO> selectLevelsQuery(

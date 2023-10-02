@@ -56,7 +56,7 @@ public class LevelController {
             @RequestParam(name = "len") String length, // "-" or number
             @RequestParam(name = "page") int page,
             @RequestParam(name = "total") int total,
-            @RequestParam(name = "uncompleted", required = false, defaultValue = "0") int isUncompleted,
+            @RequestParam(name = "uncompleted", required = false, defaultValue = "0") int isOnlyUncompleted,
             @RequestParam(name = "onlyCompleted", required = false, defaultValue = "0") int isOnlyCompleted,
             @RequestParam(name = "featured", required = false, defaultValue = "0") int isFeatured,
             @RequestParam(name = "original", required = false, defaultValue = "0") int isOriginal,
