@@ -78,8 +78,9 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
             @Nullable String levelName,
             LevelListPage.Filters filters) {
         var criteriaFilters = new ArrayList<Predicate>();
+        criteriaFilters.add(criteria.isFalse(rootLevel.get("unlisted")));
         if (levelName != null) {
-            criteriaFilters.add(criteria.like(rootLevel.get("name"), levelName + "%"));
+            criteriaFilters.add(criteria.like(criteria.lower(rootLevel.get("name")), levelName.toLowerCase() + "%"));
         }
         // todo: implement filters
         // todo: fix filters

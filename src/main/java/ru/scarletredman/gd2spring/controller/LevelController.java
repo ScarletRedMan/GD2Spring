@@ -68,8 +68,10 @@ public class LevelController {
             @RequestParam(name = "song", required = false, defaultValue = "0") int song,
             @RequestParam(name = "customSong", required = false, defaultValue = "0") int customSong) {
 
-        var levels = levelService.getLevels(new LevelListPage.Filters(
-                "", null, null, 0, false, false, false, false, false, false, false, false, 0, 0, 0));
+        var filters = new LevelListPage.Filters(
+                levelName, null, null, page, false, false, false, false, false, false, false, false, 0, 0, 0);
+
+        var levels = levelService.getLevels(filters);
         return responseLogger.result(new GetLevelsResponse(levels));
     }
 
