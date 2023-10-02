@@ -62,6 +62,7 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
                 && filters.difficulty() != null
                 && !filters.difficulty().isDemon()) return true;
         if (filters.song() != 0 && filters.customSong() != 0) return true;
+        if (filters.song() < 0 && filters.customSong() < 0) return true;
         return false;
     }
 
