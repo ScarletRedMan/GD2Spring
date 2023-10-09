@@ -22,5 +22,6 @@ public record LevelListPage(List<GDLevelDTO> levels, long total, int offset) {
             boolean noStar,
             boolean hasStar,
             int song,
-            boolean customSong) {}
+            boolean customSong,
+            LevelSearchType type) {}
 }

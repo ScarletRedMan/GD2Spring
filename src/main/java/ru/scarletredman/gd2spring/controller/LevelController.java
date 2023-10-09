@@ -11,6 +11,7 @@ import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
 import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
 import ru.scarletredman.gd2spring.service.LevelService;
 import ru.scarletredman.gd2spring.service.type.LevelListPage;
+import ru.scarletredman.gd2spring.service.type.LevelSearchType;
 import ru.scarletredman.gd2spring.util.ResponseLogger;
 
 @GeometryDashAPI
@@ -86,7 +87,8 @@ public class LevelController {
                 noStar == 1,
                 hasStar == 1,
                 song,
-                isCustomSong == 1);
+                isCustomSong == 1,
+                LevelSearchType.find(type));
 
         var levels = levelService.getLevels(filters);
         return responseLogger.result(new GetLevelsResponse(levels));

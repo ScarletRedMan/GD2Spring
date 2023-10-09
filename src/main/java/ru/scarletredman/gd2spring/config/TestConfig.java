@@ -66,12 +66,12 @@ public class TestConfig {
 
         var rate = level.getRate();
         rate.setRequestedStars(10);
-        rate.setStars(stars);
         rate.setDifficulty(LevelRateInfo.Difficulty.values()[stars]);
-        rate.setFeatured(featured);
-        rate.setEpic(featured);
-        if (stars != 0 || featured) {
+        if (stars != 0) {
+            rate.setStars(stars);
             rate.setRateTime(Timestamp.from(Instant.now()));
+            rate.setFeatured(featured);
+            rate.setEpic(featured);
         }
 
         return level;

@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import org.springframework.lang.Nullable;
 import ru.scarletredman.gd2spring.model.Level;
 import ru.scarletredman.gd2spring.model.User;
@@ -14,6 +15,7 @@ import ru.scarletredman.gd2spring.model.embedable.LevelFilters;
 import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
 import ru.scarletredman.gd2spring.repository.CustomLevelRepository;
 import ru.scarletredman.gd2spring.service.type.LevelListPage;
+import ru.scarletredman.gd2spring.service.type.LevelSearchType;
 
 public class CustomLevelRepositoryImpl implements CustomLevelRepository {
 
@@ -101,11 +103,13 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
 
         query.select(createLevelDTO(criteria, rootLevel, joinUser));
         query.where(applyFilters(criteria, rootLevel, levelName, filters));
+        query.orderBy(applySorting(criteria, rootLevel, filters.type()));
         return query;
     }
 
     private CriteriaQuery<Long> countLevelsQuery(
             CriteriaBuilder criteria, @Nullable String levelName, LevelListPage.Filters filters) {
+
         var query = criteria.createQuery(Long.class);
         var rootLevel = query.from(Level.class);
 
@@ -114,11 +118,23 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
         return query;
     }
 
+    private List<Order> applySorting(CriteriaBuilder criteria, Root<Level> rootLevel, LevelSearchType type) {
+        return switch (type) {
+            case SEARCH_BY_NAME -> List.of(criteria.asc(rootLevel.get("name")));
+            case MOST_DOWNLOADS -> List.of(criteria.desc(rootLevel.get("downloads")));
+            case FEATURED, AWARDED, HALL_OF_FAME -> List.of(
+                    criteria.desc(rootLevel.get("rate").get("rateTime")));
+            case MAGIC -> List.of(criteria.desc(rootLevel.get("id")));
+            default -> List.of(criteria.desc(rootLevel.get("likes")));
+        };
+    }
+
     private Predicate[] applyFilters(
             CriteriaBuilder criteria,
             Root<Level> rootLevel,
             @Nullable String levelName,
             LevelListPage.Filters filters) {
+
         var criteriaFilters = new ArrayList<Predicate>();
         criteriaFilters.add(criteria.isFalse(rootLevel.get("unlisted")));
         if (levelName != null) {
@@ -157,6 +173,20 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
         }
         if (filters.song() != -1 && filters.customSong()) {
             criteriaFilters.add(criteria.equal(rootLevel.get("songId"), filters.song()));
+        }
+        if (filters.type() == LevelSearchType.AWARDED
+                || filters.type() == LevelSearchType.FEATURED
+                || filters.type() == LevelSearchType.HALL_OF_FAME) {
+            criteriaFilters.add(criteria.isNotNull(rootLevel.get("rate").get("rateTime")));
+        }
+        if (filters.type() == LevelSearchType.AWARDED) {
+            criteriaFilters.add(criteria.gt(rootLevel.get("rate").get("stars"), 0));
+        }
+        if (filters.type() == LevelSearchType.FEATURED) {
+            criteriaFilters.add(criteria.isTrue(rootLevel.get("rate").get("featured")));
+        }
+        if (filters.type() == LevelSearchType.HALL_OF_FAME) {
+            criteriaFilters.add(criteria.isTrue(rootLevel.get("rate").get("epic")));
         }
 
         return criteriaFilters.toArray(new Predicate[0]);
