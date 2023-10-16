@@ -1,7 +1,5 @@
 package ru.scarletredman.gd2spring.config;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +7,8 @@ import org.springframework.context.annotation.Profile;
 import ru.scarletredman.gd2spring.model.Level;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.UserComment;
-import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
 import ru.scarletredman.gd2spring.service.LevelService;
+import ru.scarletredman.gd2spring.service.MessageService;
 import ru.scarletredman.gd2spring.service.UserCommentService;
 import ru.scarletredman.gd2spring.service.UserService;
 
@@ -22,6 +20,7 @@ public class TestConfig {
     private final UserService userService;
     private final UserCommentService userCommentService;
     private final LevelService levelService;
+    private final MessageService messageService;
 
     @Autowired
     void createTestUser(boolean debugMode) {
@@ -45,19 +44,20 @@ public class TestConfig {
             userCommentService.writeComment(new UserComment(u, "Hello world!!!"));
         }
 
+        var level = createTestLevel(user, "Test level");
+        levelService.uploadLevel(level);
+
+        var user2 = userService.findUserById(2).get();
         for (int i = 0; i < 30; i++) {
-            var level = createTestLevel(user, "Test level " + i, i, i * 2, i % 4, i % 3 == 0);
-            levelService.uploadLevel(level);
+            messageService.sendMessage(user, user2, "Sent " + i, "Hello my dear friend, Test2!");
+            messageService.sendMessage(user2, user, "Received " + i, "Hello my dear friend, Test!");
         }
     }
 
-    Level createTestLevel(User owner, String name, int likes, int downloads, int stars, boolean featured) {
+    Level createTestLevel(User owner, String name) {
         var level = new Level(owner, name);
         level.setDescription("Hello world!");
         level.setObjects(4);
-
-        level.setLikes(likes);
-        level.setDownloads(downloads);
 
         var data = level.getData();
         data.setExtra(
@@ -68,13 +68,6 @@ public class TestConfig {
 
         var rate = level.getRate();
         rate.setRequestedStars(10);
-        rate.setDifficulty(LevelRateInfo.Difficulty.values()[stars]);
-        if (stars != 0) {
-            rate.setStars(stars);
-            rate.setRateTime(Timestamp.from(Instant.now()));
-            rate.setFeatured(featured);
-            rate.setEpic(featured);
-        }
 
         return level;
     }
