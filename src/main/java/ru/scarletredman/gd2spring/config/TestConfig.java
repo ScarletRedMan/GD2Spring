@@ -8,6 +8,7 @@ import ru.scarletredman.gd2spring.model.Level;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.UserComment;
 import ru.scarletredman.gd2spring.service.LevelService;
+import ru.scarletredman.gd2spring.service.MessageService;
 import ru.scarletredman.gd2spring.service.UserCommentService;
 import ru.scarletredman.gd2spring.service.UserService;
 
@@ -19,6 +20,7 @@ public class TestConfig {
     private final UserService userService;
     private final UserCommentService userCommentService;
     private final LevelService levelService;
+    private final MessageService messageService;
 
     @Autowired
     void createTestUser(boolean debugMode) {
@@ -44,6 +46,12 @@ public class TestConfig {
 
         var level = createTestLevel(user, "Test level");
         levelService.uploadLevel(level);
+
+        var user2 = userService.findUserById(2).get();
+        for (int i = 0; i < 30; i++) {
+            messageService.sendMessage(user, user2, "Sent " + i, "Hello my dear friend, Test2!");
+            messageService.sendMessage(user2, user, "Received " + i, "Hello my dear friend, Test!");
+        }
     }
 
     Level createTestLevel(User owner, String name) {
