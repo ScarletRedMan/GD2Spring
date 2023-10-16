@@ -53,7 +53,7 @@ public final class GetMessagesResponse implements ResponseSerializer.Response {
 
         var msgList = String.join(
                 "|", messages.stream().map(MessageResponse::getResponse).toList());
-        return msgList + "#" + messagesCount + ":" + offset + ":10";
+        return msgList + "#" + messagesCount + ":" + (offset * 10) + ":10";
     }
 
     public static class MessageResponse implements ResponseSerializer.Response {
