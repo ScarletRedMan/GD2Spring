@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.scarletredman.gd2spring.model.Message;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.rabbit.MQEventPublisher;
+import ru.scarletredman.gd2spring.rabbit.response.message.MessageSendMQResponse;
 import ru.scarletredman.gd2spring.repository.MessageRepository;
 import ru.scarletredman.gd2spring.service.MessageService;
 import ru.scarletredman.gd2spring.service.type.MessageListPage;
@@ -50,9 +51,8 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     @Override
     public Message sendMessage(User sender, User receiver, String subject, String text) {
-        var message = new Message(sender, receiver, subject, text);
-        repository.save(message);
-        // todo: rabbitmq
+        var message = repository.save(new Message(sender, receiver, subject, text));
+        eventPublisher.publish(new MessageSendMQResponse(message));
         return message;
     }
 
