@@ -5,6 +5,7 @@ import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import ru.scarletredman.gd2spring.model.Level;
 import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.UserComment;
@@ -13,6 +14,7 @@ import ru.scarletredman.gd2spring.service.LevelService;
 import ru.scarletredman.gd2spring.service.UserCommentService;
 import ru.scarletredman.gd2spring.service.UserService;
 
+@Profile("test")
 @Configuration
 @RequiredArgsConstructor
 public class TestConfig {
