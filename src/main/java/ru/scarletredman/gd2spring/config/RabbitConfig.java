@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.scarletredman.gd2spring.rabbit.MQEventPublisher;
@@ -19,11 +20,15 @@ import ru.scarletredman.gd2spring.rabbit.impl.RabbitMQEventPublisher;
 public class RabbitConfig {
 
     @Bean
-    ConnectionFactory connectionFactory() {
+    ConnectionFactory connectionFactory(
+            @Value("${GD2SPRING_RABBITMQ_HOST}") String host,
+            @Value("${GD2SPRING_RABBITMQ_USER}") String user,
+            @Value("${GD2SPRING_RABBITMQ_PASSWORD}") String password) {
+
         var factory = new CachingConnectionFactory();
-        factory.setHost("localhost");
-        factory.setUsername("test");
-        factory.setPassword("test");
+        factory.setHost(host);
+        factory.setUsername(user);
+        factory.setPassword(password);
         return factory;
     }
 
@@ -33,13 +38,13 @@ public class RabbitConfig {
     }
 
     @Bean
-    AmqpTemplate amqpTemplate() {
-        return new RabbitTemplate(connectionFactory());
+    AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory) {
+        return new RabbitTemplate(connectionFactory);
     }
 
     @Bean
     @Autowired
-    MQEventPublisher eventPublisher(ObjectMapper objectMapper) {
-        return new RabbitMQEventPublisher(amqpTemplate(), objectMapper, eventExchange());
+    MQEventPublisher eventPublisher(AmqpTemplate amqpTemplate, ObjectMapper objectMapper) {
+        return new RabbitMQEventPublisher(amqpTemplate, objectMapper, eventExchange());
     }
 }

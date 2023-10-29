@@ -23,3 +23,21 @@ services:
       - "5672:5672"
     volumes:
       - "./run/rabbitmq:/var/lib/rabbitmq"
+
+  gd2spring:
+    build:
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      GD2SPRING_DATABASE_URL: jdbc:postgresql://postgres:5432/test
+      GD2SPRING_DATABASE_USER: test
+      GD2SPRING_DATABASE_PASSWORD: test
+      GD2SPRING_RABBITMQ_HOST: localhost
+      GD2SPRING_RABBITMQ_USER: test
+      GD2SPRING_RABBITMQ_PASSWORD: test
+    depends_on:
+      rabbitmq:
+        condition: service_started
+      postgres:
+        condition: service_started
