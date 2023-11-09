@@ -103,7 +103,7 @@ public class CustomLevelRepositoryImpl implements CustomLevelRepository {
 
         query.select(createLevelDTO(criteria, rootLevel, joinUser));
         query.where(applyFilters(criteria, rootLevel, levelName, filters));
-        query.orderBy(applySorting(criteria, rootLevel, filters.type()));
+        // query.orderBy(applySorting(criteria, rootLevel, filters.type())); // TODO: FIX IT
         return query;
     }
 
