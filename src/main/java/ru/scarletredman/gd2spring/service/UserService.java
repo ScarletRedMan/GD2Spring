@@ -26,7 +26,7 @@ public interface UserService extends UserDetailsService {
 
     void updateSettings(User user);
 
-    Optional<User> findUserWithRating(int userId);
+    Optional<User> findUserWithRating(long userId);
 
     List<UserScoreDTO> getTop100UsersByStars();
 

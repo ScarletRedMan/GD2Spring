@@ -8,7 +8,7 @@ import ru.scarletredman.gd2spring.model.Message;
 import ru.scarletredman.gd2spring.model.User;
 
 @Repository
-public interface MessageRepository extends JpaRepository<Message, Long> {
+public interface MessageRepository extends JpaRepository<Message, Long>, CustomMessageRepository {
 
     List<Message> findBySenderOrderByIdDesc(User sender, Pageable pageable);
 

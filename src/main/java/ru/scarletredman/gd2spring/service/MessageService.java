@@ -22,4 +22,6 @@ public interface MessageService {
     void deleteMessagesById(User user, Collection<Long> messageIds) throws AccessDeniedException;
 
     void deleteMessages(User user, Collection<Message> messages) throws AccessDeniedException;
+
+    long countNewMessages(User user);
 }

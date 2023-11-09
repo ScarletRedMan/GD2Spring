@@ -9,9 +9,9 @@ import ru.scarletredman.gd2spring.controller.annotation.GeometryDashAPI;
 import ru.scarletredman.gd2spring.controller.response.GetUsersResponse;
 import ru.scarletredman.gd2spring.controller.response.ScoresResponse;
 import ru.scarletredman.gd2spring.controller.response.UserInfoResponse;
-import ru.scarletredman.gd2spring.model.User;
 import ru.scarletredman.gd2spring.model.dto.UserScoreDTO;
 import ru.scarletredman.gd2spring.security.annotation.GDAuthorizedOnly;
+import ru.scarletredman.gd2spring.service.UserScoreService;
 import ru.scarletredman.gd2spring.service.UserService;
 import ru.scarletredman.gd2spring.util.ResponseLogger;
 
@@ -21,6 +21,7 @@ import ru.scarletredman.gd2spring.util.ResponseLogger;
 public class UserScoreController {
 
     private final UserService userService;
+    private final UserScoreService scoreService;
     private final ResponseLogger responseLogger;
 
     @GDAuthorizedOnly
@@ -77,17 +78,15 @@ public class UserScoreController {
 
     @GDAuthorizedOnly
     @PostMapping("/getGJUserInfo20.php")
-    UserInfoResponse getUserInfo(@RequestParam(name = "targetAccountID") int targetAccountId) {
+    UserInfoResponse getUserInfo(@RequestParam(name = "targetAccountID") long targetAccountId) {
         var user = UserService.getCurrentUserFromSecurityContextHolder();
-        User targetUser;
+        var score = scoreService.getUserScore(user, targetAccountId);
 
-        {
-            var temp = userService.findUserWithRating(targetAccountId);
-            if (temp.isEmpty()) return UserInfoResponse.errorResponse();
-            targetUser = temp.get();
+        if (score.isError()) {
+            return responseLogger.result(UserInfoResponse.errorResponse());
         }
 
-        return responseLogger.result(new UserInfoResponse(targetUser, user.equals(targetUser)));
+        return responseLogger.result(new UserInfoResponse(score));
     }
 
     @GDAuthorizedOnly

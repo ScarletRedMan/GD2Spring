@@ -48,7 +48,8 @@ public class MessageController {
     @GDAuthorizedOnly
     @PostMapping("/downloadGJMessage20.php")
     MessageResponse download(
-            @RequestParam(name = "messageID") long messageId, @RequestParam(name = "isSender") int isSender) {
+            @RequestParam(name = "messageID") long messageId,
+            @RequestParam(name = "isSender", required = false, defaultValue = "0") int isSender) {
 
         var user = UserService.getCurrentUserFromSecurityContextHolder();
         var message = messageService.readMessage(messageId);

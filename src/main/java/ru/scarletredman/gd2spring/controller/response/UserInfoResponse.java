@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.lang.NonNull;
 import ru.scarletredman.gd2spring.controller.response.json.ResponseSerializer;
 import ru.scarletredman.gd2spring.model.User;
+import ru.scarletredman.gd2spring.service.type.UserScore;
 import ru.scarletredman.gd2spring.util.JoinResponseUtil;
 
 @Getter
@@ -20,18 +21,21 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
     private final boolean error;
     private final User user;
     private final boolean self;
+    private final long newMessages;
     private final Map<Stat, Object> stats = new EnumMap<>(Stat.class);
 
     private UserInfoResponse() {
         this.error = true;
         this.user = null;
         this.self = false;
+        this.newMessages = 0;
     }
 
-    public UserInfoResponse(@NonNull User user, boolean self) {
+    public UserInfoResponse(UserScore score) {
         this.error = false;
-        this.user = user;
-        this.self = self;
+        this.user = score.target();
+        this.self = score.isSelf();
+        this.newMessages = score.newMessages();
         init(user);
     }
 
@@ -83,7 +87,7 @@ public final class UserInfoResponse implements ResponseSerializer.Response {
         stats.put(Stat.BADGE, Badge.NONE); // todo: moderator status
 
         if (!self) return;
-        stats.put(Stat.MESSAGES_COUNT, 0); // todo: messages
+        stats.put(Stat.MESSAGES_COUNT, newMessages); // todo: messages
         stats.put(Stat.FRIENDS_REQ_COUNT, 0); // todo: friends
         stats.put(Stat.FRIENDS_COUNT, 0); // todo: friends
     }

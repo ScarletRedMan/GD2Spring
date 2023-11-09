@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> findUserWithRating(int userId) {
+    public Optional<User> findUserWithRating(long userId) {
         var user = findUserById(userId);
         if (user.isEmpty()) return user;
 

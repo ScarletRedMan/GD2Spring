@@ -74,7 +74,7 @@ public final class GetMessagesResponse implements ResponseSerializer.Response {
             setSubject(message.getSubject());
             elements.put(Key.TARGET_USERNAME, target.getUsername());
             elements.put(Key.UPLOAD_TIME, TimeFormatUtil.formatBetween(message.getTime()));
-            elements.put(Key.IS_NEW, message.isNew() ? 1 : 0);
+            elements.put(Key.IS_NEW, message.isNew() ? 0 : 1);
             elements.put(Key.IS_SENDER, isSender ? 1 : 0);
         }
 

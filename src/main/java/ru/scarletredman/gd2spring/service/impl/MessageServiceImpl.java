@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import ru.scarletredman.gd2spring.repository.MessageRepository;
 import ru.scarletredman.gd2spring.service.MessageService;
 import ru.scarletredman.gd2spring.service.type.MessageListPage;
 
+@DependsOn("messageRepository")
 @RequiredArgsConstructor
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -101,5 +103,11 @@ public class MessageServiceImpl implements MessageService {
                 .toList();
 
         repository.deleteAll(newList);
+    }
+
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    @Override
+    public long countNewMessages(User user) {
+        return repository.countNewMessages(user);
     }
 }
