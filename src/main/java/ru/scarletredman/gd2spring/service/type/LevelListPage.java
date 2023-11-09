@@ -1,7 +1,6 @@
 package ru.scarletredman.gd2spring.service.type;
 
 import java.util.List;
-import org.springframework.lang.Nullable;
 import ru.scarletredman.gd2spring.model.dto.GDLevelDTO;
 import ru.scarletredman.gd2spring.model.embedable.LevelFilters;
 import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
@@ -10,10 +9,10 @@ public record LevelListPage(List<GDLevelDTO> levels, long total, int offset) {
 
     public record Filters(
             String name,
-            @Nullable LevelRateInfo.Difficulty difficulty,
-            @Nullable LevelFilters.Length length,
+            List<LevelRateInfo.Difficulty> difficulty,
+            List<LevelFilters.Length> length,
             int page,
-            boolean uncompleted,
+            boolean onlyCompleted,
             boolean onlyUncompleted,
             boolean featured,
             boolean original,
@@ -21,7 +20,8 @@ public record LevelListPage(List<GDLevelDTO> levels, long total, int offset) {
             boolean coins,
             boolean epic,
             boolean noStar,
-            int demonFilter,
+            boolean hasStar,
             int song,
-            int customSong) {}
+            boolean customSong,
+            LevelSearchType type) {}
 }

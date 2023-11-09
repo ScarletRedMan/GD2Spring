@@ -12,7 +12,11 @@ import ru.scarletredman.gd2spring.model.embedable.LevelRateInfo;
 @Entity
 @Table(
         name = "levels",
-        indexes = {@Index(name = "level_name_index", columnList = "name")})
+        indexes = {
+            @Index(name = "level_name_index", columnList = "name"),
+            @Index(name = "level_rate_time_index", columnList = "rate_time"),
+            @Index(name = "level_difficulty_index", columnList = "difficulty")
+        })
 public class Level {
 
     @Id
@@ -30,9 +34,8 @@ public class Level {
     @JoinColumn(name = "owner", nullable = false)
     private User owner;
 
-    @ManyToOne
-    @JoinColumn(name = "original")
-    private Level original = null;
+    @Column(name = "original")
+    private Long original = null;
 
     @Embedded
     private LevelRateInfo rate = new LevelRateInfo();

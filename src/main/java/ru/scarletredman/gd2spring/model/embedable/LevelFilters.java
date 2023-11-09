@@ -2,6 +2,8 @@ package ru.scarletredman.gd2spring.model.embedable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.LinkedList;
+import java.util.List;
 import lombok.*;
 
 @Getter
@@ -30,5 +32,21 @@ public class LevelFilters {
         XL(4);
 
         private final int code;
+
+        public static List<Length> parseGDSearch(String input) {
+            var list = new LinkedList<Length>();
+            if (input.equals("-")) return list;
+
+            var nums = input.split(",");
+            for (var num : nums) {
+                try {
+                    var len = values()[Integer.parseInt(num)];
+                    list.add(len);
+                } catch (NumberFormatException | IndexOutOfBoundsException ignore) {
+                }
+            }
+
+            return list;
+        }
     }
 }
