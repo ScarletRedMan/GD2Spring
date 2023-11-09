@@ -51,7 +51,7 @@ public class MessageController {
             @RequestParam(name = "messageID") long messageId, @RequestParam(name = "isSender") int isSender) {
 
         var user = UserService.getCurrentUserFromSecurityContextHolder();
-        var message = messageService.getMessageById(messageId);
+        var message = messageService.readMessage(messageId);
 
         if (message.isEmpty()) {
             return responseLogger.result(MessageResponse.error());

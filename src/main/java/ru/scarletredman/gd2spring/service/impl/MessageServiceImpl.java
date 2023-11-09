@@ -31,6 +31,21 @@ public class MessageServiceImpl implements MessageService {
         return repository.findById(id);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Override
+    public Optional<Message> readMessage(long id) {
+        var messageOpt = getMessageById(id);
+        if (messageOpt.isEmpty()) return Optional.empty();
+
+        var message = messageOpt.get();
+        if (message.isNew()) {
+            message.setNew(false);
+            repository.save(message);
+        }
+
+        return Optional.of(message);
+    }
+
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     @Override
     public MessageListPage getMessages(User user, boolean sent, int page, int limit) {

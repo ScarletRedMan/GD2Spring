@@ -11,6 +11,8 @@ public interface MessageService {
 
     Optional<Message> getMessageById(long id);
 
+    Optional<Message> readMessage(long id);
+
     MessageListPage getMessages(User user, boolean sent, int page, int limit);
 
     Message sendMessage(User sender, User receiver, String subject, String text);
